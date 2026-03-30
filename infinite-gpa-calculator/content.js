@@ -1,17 +1,3 @@
-/**
- * content.js — Main content script injected into every Infinite Campus page.
- *
- * Responsibilities:
- *  1. Inject the "🧮 GPA" floating button at the top-centre of the page
- *  2. Parse grades from notifications + grade tables
- *  3. Open / close the GPA modal
- *  4. Keep everything in sync via MutationObserver
- */
-
-/* ═══════════════════════════════════════════════════════════════
-   CONSTANTS & HELPERS
-═══════════════════════════════════════════════════════════════ */
-
 const LOG = (...args) => console.log('[GPA Calc]', ...args);
 const WARN = (...args) => console.warn('[GPA Calc]', ...args);
 
@@ -19,26 +5,10 @@ const BUTTON_ID   = 'infinite-gpa-btn';
 const MODAL_ID    = 'infinite-gpa-modal';
 const OVERLAY_ID  = 'infinite-gpa-overlay';
 
-/* ═══════════════════════════════════════════════════════════════
-   GRADE PARSING ENGINE
-═══════════════════════════════════════════════════════════════ */
-
-/**
- * Regex to match:
- *   "James has an updated grade of 82 (81.79%) in Literature & Composition II: Course Average"
- */
 const GRADE_REGEX = /updated grade of (\d+(?:\.\d+)?)\s*\((\d+(?:\.\d+)?)%\)\s*in\s+(.+?)(?:\s*:\s*(Course Average|Semester\s+\d+\s+Average|9\s*WEEKS?|Semester Average))?$/i;
 
-/**
- * Regex to match assignment scores (lower priority than course averages):
- *   "James received a score of 100 out of 100 on NoRedInk Practice in Literature & Composition II"
- */
 const ASSIGNMENT_REGEX = /received a score of (\d+(?:\.\d+)?)\s+out of\s+(\d+(?:\.\d+)?)\s+on\s+.+?\s+in\s+(.+)$/i;
 
-/**
- * Parse a single notification text node.
- * Returns { courseName, pct, type } or null.
- */
 function parseNotificationText(text) {
   if (!text) return null;
   text = text.trim();
@@ -70,12 +40,8 @@ function parseNotificationText(text) {
   return null;
 }
 
-/**
- * Collect grades from all notification elements on the page.
- * Deduplicates by course name — keeps Course Average over Assignment when both exist.
- */
 function parseGradesFromNotifications() {
-  const courseMap = new Map(); // courseName → gradeEntry
+  const courseMap = new Map(); 
 
   const notifEls = document.querySelectorAll(
     '.notification__text, [class*="notification"] a, [class*="notification"] span'
@@ -89,25 +55,20 @@ function parseGradesFromNotifications() {
     const key = entry.courseName.toLowerCase();
     const existing = courseMap.get(key);
 
-    // Priority: Course/Semester average > assignment score
     if (!existing) {
       courseMap.set(key, entry);
     } else if (
       existing.source === 'notification-assignment' &&
       entry.source === 'notification-average'
     ) {
-      courseMap.set(key, entry); // upgrade to average
+      courseMap.set(key, entry); 
     }
-    // If existing is already an average, keep it (first = most recent in DOM order)
+    
   });
 
   return Array.from(courseMap.values());
 }
 
-/**
- * Fallback: try to extract grades from the grades iframe / table.
- * Looks for percentage text near course name text.
- */
 function parseGradesFromTable() {
   const courses = [];
   const frames = [document, ...Array.from(document.querySelectorAll('iframe')).map(f => {
@@ -115,21 +76,20 @@ function parseGradesFromTable() {
   }).filter(Boolean)];
 
   frames.forEach(doc => {
-    // Look for rows that contain both a course name and a percentage
+    
     const rows = doc.querySelectorAll('tr, .course-row, [class*="grade-row"]');
     rows.forEach(row => {
       const text = row.textContent || '';
       const pctMatch = /(\d+(?:\.\d+)?)\s*%/.exec(text);
       if (!pctMatch) return;
 
-      // Try to extract a course name from the first cell
       const cells = row.querySelectorAll('td, th, [class*="course"], [class*="name"]');
       if (cells.length === 0) return;
       const courseName = cells[0].textContent.trim();
       if (!courseName || courseName.length < 3) return;
 
       const pct = parseFloat(pctMatch[1]);
-      if (pct < 0 || pct > 110) return; // sanity check
+      if (pct < 0 || pct > 110) return; 
 
       courses.push({
         courseName,
@@ -144,10 +104,6 @@ function parseGradesFromTable() {
   return courses;
 }
 
-/**
- * Master parse function.
- * Tries notifications first; falls back to table parsing.
- */
 function parseAllGrades() {
   const notifGrades = parseGradesFromNotifications();
   if (notifGrades.length > 0) {
@@ -165,11 +121,6 @@ function parseAllGrades() {
   return [];
 }
 
-/* ═══════════════════════════════════════════════════════════════
-   GPA CALCULATION ENGINE
-═══════════════════════════════════════════════════════════════ */
-
-/** Standard 4.0 unweighted scale */
 function pctToUnweightedPoints(pct) {
   if (pct >= 90) return 4.0;
   if (pct >= 80) return 3.0;
@@ -178,7 +129,6 @@ function pctToUnweightedPoints(pct) {
   return 0.0;
 }
 
-/** Auto-detect weighting boost for a course name */
 function getWeightBoost(courseName) {
   const lower = courseName.toLowerCase();
   if (/\bap\b|advanced placement/i.test(lower)) return 1.0;
@@ -186,7 +136,6 @@ function getWeightBoost(courseName) {
   return 0.0;
 }
 
-/** Convert percentage to letter grade */
 function pctToLetter(pct) {
   if (pct >= 90) return 'A';
   if (pct >= 80) return 'B';
@@ -195,10 +144,6 @@ function pctToLetter(pct) {
   return 'F';
 }
 
-/**
- * Main GPA calculation.
- * Returns { unweighted, weighted, courses }
- */
 function calculateGPA(grades) {
   if (grades.length === 0) {
     return { unweighted: null, weighted: null, courses: [] };
@@ -207,7 +152,7 @@ function calculateGPA(grades) {
   const courses = grades.map(g => {
     const unweightedPts = pctToUnweightedPoints(g.pct);
     const boost = getWeightBoost(g.courseName);
-    const weightedPts = unweightedPts > 0 ? Math.min(5.0, unweightedPts + boost) : 0.0; // no boost on F
+    const weightedPts = unweightedPts > 0 ? Math.min(5.0, unweightedPts + boost) : 0.0; 
     return {
       ...g,
       letter: pctToLetter(g.pct),
@@ -230,10 +175,6 @@ function calculateGPA(grades) {
     calculatedAt: new Date().toISOString()
   };
 }
-
-/* ═══════════════════════════════════════════════════════════════
-   MODAL (inline — injected into the page DOM)
-═══════════════════════════════════════════════════════════════ */
 
 function buildModalHTML(result) {
   const { unweighted, weighted, courses, totalCredits, calculatedAt } = result;
@@ -320,7 +261,6 @@ function buildModalHTML(result) {
 </div>`;
 }
 
-/** Simple HTML escaper */
 function escapeHTML(str) {
   return String(str)
     .replace(/&/g, '&amp;')

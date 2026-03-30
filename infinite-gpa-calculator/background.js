@@ -1,11 +1,3 @@
-/**
- * background.js — Manifest V3 Service Worker
- * Handles keyboard commands and message routing between the content script and modal.
- */
-
-// ──────────────────────────────────────────────
-// Keyboard shortcut: Ctrl/Cmd + Shift + G
-// ──────────────────────────────────────────────
 chrome.commands.onCommand.addListener((command) => {
   if (command === 'open-gpa-calculator') {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
@@ -15,12 +7,8 @@ chrome.commands.onCommand.addListener((command) => {
   }
 });
 
-// ──────────────────────────────────────────────
-// Install / update lifecycle
-// ──────────────────────────────────────────────
 chrome.runtime.onInstalled.addListener(({ reason }) => {
   if (reason === 'install') {
-    // Seed default settings on first install
     chrome.storage.sync.set({
       settings: {
         autoCalculate: true,
@@ -40,15 +28,11 @@ chrome.runtime.onInstalled.addListener(({ reason }) => {
   }
 });
 
-// ──────────────────────────────────────────────
-// Pass-through messaging (content ↔ modal)
-// ──────────────────────────────────────────────
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
   if (msg.action === 'SAVE_HISTORY') {
     chrome.storage.sync.get(['history'], (data) => {
       const history = data.history || [];
       history.unshift(msg.entry);
-      // Keep only last 50 snapshots
       chrome.storage.sync.set({ history: history.slice(0, 50) }, () => {
         sendResponse({ ok: true });
       });

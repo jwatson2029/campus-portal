@@ -1,15 +1,3 @@
-/*
- * modal.css — Styles for the Infinite GPA Calculator
- *
- * Injected alongside content.js so all modal / button styles
- * are available without a shadow DOM.  Uses the `igpa-` prefix
- * to avoid conflicts with Infinite Campus styles.
- *
- * Supports both light & dark mode (matches IC's CSS variables when
- * present; falls back to sensible defaults).
- */
-
-/* ── Variables ──────────────────────────────────────────────── */
 :root {
   --igpa-accent:     #1a73e8;
   --igpa-accent-h:   #1558b0;
@@ -22,7 +10,6 @@
   --igpa-radius:     12px;
   --igpa-font:       -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
 
-  /* grade colours */
   --igpa-a: #1e8e3e;
   --igpa-b: #1a73e8;
   --igpa-c: #f9ab00;
@@ -30,7 +17,6 @@
   --igpa-f: #d93025;
 }
 
-/* Dark mode (auto-detects system preference or IC dark class) */
 @media (prefers-color-scheme: dark) {
   :root {
     --igpa-bg:         #1e1e2e;
@@ -51,7 +37,6 @@ body.dark-mode,
   --igpa-text-muted: #9aa0a6;
 }
 
-/* ── Overlay ────────────────────────────────────────────────── */
 #infinite-gpa-overlay {
   position: fixed;
   inset: 0;
@@ -59,7 +44,7 @@ body.dark-mode,
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 2147483647; /* topmost possible */
+  z-index: 2147483647; 
   font-family: var(--igpa-font);
   animation: igpa-fade-in 0.15s ease;
 }
@@ -69,7 +54,6 @@ body.dark-mode,
   to   { opacity: 1; }
 }
 
-/* ── Modal container ────────────────────────────────────────── */
 #infinite-gpa-modal {
   background: var(--igpa-bg);
   color: var(--igpa-text);
@@ -89,7 +73,6 @@ body.dark-mode,
   to   { transform: translateY(0);    opacity: 1; }
 }
 
-/* ── Header ─────────────────────────────────────────────────── */
 .igpa-modal-header {
   display: flex;
   align-items: center;
@@ -148,7 +131,6 @@ body.dark-mode,
   font-weight: 700;
 }
 
-/* ── GPA Summary cards — larger & more prominent ────────────── */
 .igpa-summary {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
@@ -200,7 +182,6 @@ body.dark-mode,
 .igpa-card-w  .igpa-card-value { color: var(--igpa-a); }
 .igpa-card-info .igpa-card-value { color: var(--igpa-text); }
 
-/* ── Toolbar ────────────────────────────────────────────────── */
 .igpa-toolbar {
   display: flex;
   align-items: center;
@@ -221,7 +202,6 @@ body.dark-mode,
   flex-wrap: wrap;
 }
 
-/* ── Buttons ────────────────────────────────────────────────── */
 .igpa-btn {
   display: inline-flex;
   align-items: center;
@@ -272,7 +252,6 @@ body.dark-mode,
   font-size: 12px;
 }
 
-/* ── Table ──────────────────────────────────────────────────── */
 .igpa-table-wrap {
   overflow-x: auto;
   padding: 0 22px 18px;
@@ -330,7 +309,6 @@ body.dark-mode,
   white-space: nowrap;
 }
 
-/* Letter grade badges */
 .igpa-letter {
   display: inline-block;
   padding: 2px 8px;
@@ -359,7 +337,6 @@ body.dark-mode,
   padding: 24px !important;
 }
 
-/* ── Settings panel ─────────────────────────────────────────── */
 .igpa-settings-panel {
   margin: 0 22px 18px;
   border: 1px solid var(--igpa-border);
@@ -444,7 +421,6 @@ body.dark-mode,
   justify-content: flex-end;
 }
 
-/* ── Footer ─────────────────────────────────────────────────── */
 .igpa-footer {
   padding: 10px 22px;
   font-size: 12px;
@@ -463,13 +439,12 @@ body.dark-mode,
   font-size: 11px;
 }
 
-/* ── Top-centre floating GPA button ─────────────────────────── */
 #infinite-gpa-btn.igpa-nav-btn {
   position: fixed;
   top: 0;
   left: 50%;
   transform: translateX(-50%);
-  z-index: 2147483646; /* just below the modal overlay */
+  z-index: 2147483646; 
   display: inline-flex;
   align-items: center;
   gap: 6px;
@@ -498,7 +473,6 @@ body.dark-mode,
   box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
-/* Scrollbar (webkit) */
 #infinite-gpa-modal::-webkit-scrollbar {
   width: 6px;
 }

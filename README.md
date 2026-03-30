@@ -11,7 +11,6 @@ A Chrome extension that instantly calculates your **Unweighted & Weighted GPA** 
 - ⌨️ **Keyboard shortcut** — `Ctrl+Shift+G` (Mac: `Cmd+Shift+G`) to open the calculator instantly
 - 📋 **Per-course breakdown** with letter grades and GPA points
 - ⬇️ **Export** your grades as CSV or JSON
-- ⚙️ **Customizable GPA scale** and course weighting rules via the Settings page
 - 📈 **GPA history** — tracks snapshots over time
 - 🌙 **Dark mode** support
 
@@ -33,7 +32,7 @@ Search for **"Infinite GPA Calculator"** in the [Chrome Web Store](https://chrom
 3. Enable **Developer mode** (toggle in the top-right corner)
 4. Click **Load unpacked**
 5. Select the `infinite-gpa-calculator` folder inside the cloned repo
-6. Navigate to your Infinite Campus portal — the **GPA** button will appear in the navigation bar
+6. Navigate to your Infinite Campus portal — the **GPA** floating button will appear at the top of the page
 
 ---
 
@@ -41,15 +40,8 @@ Search for **"Infinite GPA Calculator"** in the [Chrome Web Store](https://chrom
 
 1. Log in to your Infinite Campus student portal
 2. Go to any grades page
-3. Click the **GPA** button in the navigation bar (or press `Ctrl+Shift+G`)
+3. Click the **GPA** floating button at the top of the page (or press `Ctrl+Shift+G`)
 4. Your Unweighted and Weighted GPA are calculated instantly
-
-### Settings
-
-Click the **⚙ Settings** link in the extension popup to:
-- Adjust the GPA scale cutoffs
-- Add/remove course weight rules (e.g., AP +1.0, Honors +0.5)
-- View your GPA history
 
 ---
 
