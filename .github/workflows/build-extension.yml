@@ -62,8 +62,6 @@ jobs:
             "infinite-gpa-calculator/modal.html"
             "infinite-gpa-calculator/modal.js"
             "infinite-gpa-calculator/modal.css"
-            "infinite-gpa-calculator/options.html"
-            "infinite-gpa-calculator/options.js"
             "infinite-gpa-calculator/icons/icon-16.png"
             "infinite-gpa-calculator/icons/icon-48.png"
             "infinite-gpa-calculator/icons/icon-128.png"
