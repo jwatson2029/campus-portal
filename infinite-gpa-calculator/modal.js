@@ -17,14 +17,6 @@ function escapeHTML(str) {
     .replace(/"/g, '&quot;');
 }
 
-function pctToLetter(pct) {
-  if (pct >= 90) return 'A';
-  if (pct >= 80) return 'B';
-  if (pct >= 70) return 'C';
-  if (pct >= 60) return 'D';
-  return 'F';
-}
-
 /* ── Render ─────────────────────────────────────────────────── */
 
 function renderPopup(entry) {
@@ -82,6 +74,8 @@ document.addEventListener('DOMContentLoaded', () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
       if (!tabs[0]) return;
       chrome.tabs.sendMessage(tabs[0].id, { action: 'TOGGLE_GPA_MODAL' }, () => {
+        // Suppress "no receiving end" error when the active tab is not an IC page
+        void chrome.runtime.lastError;
         window.close();
       });
     });

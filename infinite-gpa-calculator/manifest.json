@@ -18,6 +18,16 @@
     "https://*.infinitecampus.com/*"
   ],
 
+  "action": {
+    "default_popup": "modal.html",
+    "default_title": "Infinite GPA Calculator",
+    "default_icon": {
+      "16": "icons/icon-16.png",
+      "48": "icons/icon-48.png",
+      "128": "icons/icon-128.png"
+    }
+  },
+
   "background": {
     "service_worker": "background.js"
   },
@@ -31,8 +41,7 @@
       ],
       "js": ["inject-button.js", "content.js"],
       "css": ["modal.css"],
-      "run_at": "document_idle",
-      "all_frames": true
+      "run_at": "document_idle"
     }
   ],
 
