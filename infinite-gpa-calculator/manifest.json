@@ -2,8 +2,7 @@
   "manifest_version": 3,
   "name": "Infinite GPA Calculator",
   "version": "1.0.0",
-  "description": "Instantly calculates your Unweighted & Weighted GPA from Infinite Campus grades.",
-  "author": "Infinite GPA Calculator",
+  "description": "Instantly calculate your Unweighted & Weighted GPA from your Infinite Campus grades — with per-course breakdown, export, and customizable weighting.",
 
   "icons": {
     "16": "icons/icon-16.png",
@@ -30,7 +29,7 @@
         "https://*.infinitecampus.org/*",
         "https://*.infinitecampus.com/*"
       ],
-      "js": ["content.js"],
+      "js": ["inject-button.js", "content.js"],
       "css": ["modal.css"],
       "run_at": "document_idle",
       "all_frames": true
@@ -51,7 +50,7 @@
 
   "web_accessible_resources": [
     {
-      "resources": ["modal.html", "modal.js", "modal.css", "icons/*.png"],
+      "resources": ["modal.html", "modal.js", "modal.css", "inject-button.js", "icons/*.png"],
       "matches": [
         "https://campus.forsyth.k12.ga.us/*",
         "https://*.infinitecampus.org/*",

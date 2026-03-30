@@ -463,51 +463,31 @@ body.dark-mode,
   font-size: 11px;
 }
 
-/* ── Floating GPA button (fixed, top-center) ────────────────── */
-#infinite-gpa-btn.igpa-floating-btn {
-  position: fixed;
-  top: 20px;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 999999;
+/* ── Nav-bar GPA button ─────────────────────────────────────── */
+#infinite-gpa-btn.igpa-nav-btn {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
-  padding: 10px 20px;
-  border-radius: 50px;
+  gap: 5px;
+  padding: 5px 10px;
   border: none;
-  background: #ffffff;
-  color: #202124;
-  font-size: 15px;
-  font-weight: 700;
+  background: transparent;
+  color: inherit;
+  font-size: 14px;
+  font-weight: 600;
   font-family: var(--igpa-font);
   cursor: pointer;
-  box-shadow: 0 2px 12px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.10);
-  transition: box-shadow 0.15s, transform 0.15s, background 0.15s;
+  border-radius: 6px;
+  transition: background 0.15s;
   white-space: nowrap;
   user-select: none;
 }
 
-#infinite-gpa-btn.igpa-floating-btn:hover {
-  background: #f1f3f4;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.22), 0 2px 8px rgba(0,0,0,0.12);
-  transform: translateX(-50%) translateY(-1px);
+#infinite-gpa-btn.igpa-nav-btn:hover {
+  background: rgba(0, 0, 0, 0.07);
 }
 
-#infinite-gpa-btn.igpa-floating-btn:active {
-  transform: translateX(-50%) translateY(0);
-  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-}
-
-.igpa-floating-icon {
-  font-size: 18px;
-  line-height: 1;
-}
-
-.igpa-floating-label {
-  font-size: 14px;
-  font-weight: 700;
-  letter-spacing: 0.3px;
+#infinite-gpa-btn.igpa-nav-btn:active {
+  background: rgba(0, 0, 0, 0.12);
 }
 
 /* Scrollbar (webkit) */
