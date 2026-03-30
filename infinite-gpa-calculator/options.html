@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Infinite GPA Calculator — Settings</title>
+  <link rel="stylesheet" href="modal.css" />
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      min-width: 520px;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background: var(--igpa-bg);
+      color: var(--igpa-text);
+    }
+
+    .opt-header {
+      background: var(--igpa-bg-2);
+      border-bottom: 1px solid var(--igpa-border);
+      padding: 20px 28px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .opt-logo { font-size: 26px; }
+
+    .opt-title {
+      font-size: 18px;
+      font-weight: 700;
+    }
+
+    .opt-subtitle {
+      font-size: 12px;
+      color: var(--igpa-text-muted);
+      margin-top: 2px;
+    }
+
+    .opt-body { padding: 24px 28px; max-width: 680px; }
+
+    .opt-section {
+      margin-bottom: 28px;
+    }
+
+    .opt-section-title {
+      font-size: 13px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: var(--igpa-text-muted);
+      margin-bottom: 14px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid var(--igpa-border);
+    }
+
+    .opt-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--igpa-border);
+      gap: 12px;
+    }
+
+    .opt-row:last-child { border-bottom: none; }
+
+    .opt-row-label {
+      flex: 1;
+    }
+
+    .opt-row-label strong {
+      display: block;
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .opt-row-label span {
+      font-size: 12px;
+      color: var(--igpa-text-muted);
+    }
+
+    .opt-toggle {
+      position: relative;
+      width: 42px;
+      height: 24px;
+      flex-shrink: 0;
+    }
+
+    .opt-toggle input { opacity: 0; width: 0; height: 0; }
+
+    .opt-toggle-slider {
+      position: absolute;
+      inset: 0;
+      background: var(--igpa-border);
+      border-radius: 24px;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .opt-toggle-slider::before {
+      content: '';
+      position: absolute;
+      left: 3px;
+      top: 3px;
+      width: 18px;
+      height: 18px;
+      background: #fff;
+      border-radius: 50%;
+      transition: transform 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.3);
+    }
+
+    .opt-toggle input:checked + .opt-toggle-slider { background: var(--igpa-accent); }
+    .opt-toggle input:checked + .opt-toggle-slider::before { transform: translateX(18px); }
+
+    /* Scale table */
+    .opt-scale-table { width: 100%; border-collapse: collapse; font-size: 13px; }
+
+    .opt-scale-table th {
+      background: var(--igpa-bg-2);
+      padding: 8px 10px;
+      text-align: left;
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--igpa-text-muted);
+      border-bottom: 2px solid var(--igpa-border);
+    }
+
+    .opt-scale-table td {
+      padding: 8px 10px;
+      border-bottom: 1px solid var(--igpa-border);
+    }
+
+    .opt-scale-table td:last-child { width: 100px; }
+
+    .opt-scale-table input {
+      width: 70px;
+      padding: 4px 8px;
+      border: 1px solid var(--igpa-border);
+      border-radius: 5px;
+      background: var(--igpa-bg);
+      color: var(--igpa-text);
+      font-size: 13px;
+      font-family: inherit;
+    }
+
+    /* Weighting rules */
+    #opt-weight-rows { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+
+    .opt-weight-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .opt-weight-row .igpa-input { font-size: 13px; }
+
+    /* History */
+    #opt-history-list {
+      max-height: 240px;
+      overflow-y: auto;
+      font-size: 13px;
+    }
+
+    .opt-history-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--igpa-border);
+      gap: 8px;
+    }
+
+    .opt-history-item:last-child { border-bottom: none; }
+
+    .opt-history-ts { color: var(--igpa-text-muted); font-size: 12px; }
+
+    .opt-history-gpas { font-weight: 700; font-size: 13px; }
+
+    .opt-save-bar {
+      position: sticky;
+      bottom: 0;
+      background: var(--igpa-bg-2);
+      border-top: 1px solid var(--igpa-border);
+      padding: 14px 28px;
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+
+    .opt-status {
+      font-size: 13px;
+      color: var(--igpa-a);
+      display: flex;
+      align-items: center;
+      margin-right: auto;
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <div class="opt-header">
+    <span class="opt-logo">📊</span>
+    <div>
+      <div class="opt-title">Infinite GPA Calculator</div>
+      <div class="opt-subtitle">Extension Settings &amp; Configuration</div>
+    </div>
+  </div>
+
+  <div class="opt-body">
+
+    <!-- General -->
+    <div class="opt-section">
+      <div class="opt-section-title">General</div>
+
+      <div class="opt-row">
+        <div class="opt-row-label">
+          <strong>Auto-calculate on page load</strong>
+          <span>Automatically parse grades when Infinite Campus loads</span>
+        </div>
+        <label class="opt-toggle">
+          <input type="checkbox" id="opt-auto-calc" />
+          <span class="opt-toggle-slider"></span>
+        </label>
+      </div>
+
+      <div class="opt-row">
+        <div class="opt-row-label">
+          <strong>Show GPA button in nav bar</strong>
+          <span>Display the 📊 GPA button next to the bell icon</span>
+        </div>
+        <label class="opt-toggle">
+          <input type="checkbox" id="opt-show-btn" />
+          <span class="opt-toggle-slider"></span>
+        </label>
+      </div>
+    </div>
+
+    <!-- GPA Scale -->
+    <div class="opt-section">
+      <div class="opt-section-title">Unweighted GPA Scale</div>
+      <table class="opt-scale-table" id="opt-scale-table">
+        <thead>
+          <tr>
+            <th>Grade Range</th>
+            <th>Letter</th>
+            <th>GPA Points</th>
+          </tr>
+        </thead>
+        <tbody>
+          <!-- Populated by options.js -->
+        </tbody>
+      </table>
+    </div>
+
+    <!-- Weighted Rules -->
+    <div class="opt-section">
+      <div class="opt-section-title">Weighting Rules</div>
+      <p style="font-size:13px;color:var(--igpa-text-muted);margin:0 0 12px">
+        Add keywords that appear in course names and assign a GPA boost (e.g. 1.0 for AP, 0.5 for Honors).
+      </p>
+      <div id="opt-weight-rows"></div>
+      <button class="igpa-btn igpa-btn-sm igpa-btn-secondary" id="opt-add-weight">+ Add Rule</button>
+    </div>
+
+    <!-- GPA History -->
+    <div class="opt-section">
+      <div class="opt-section-title">GPA History</div>
+      <div id="opt-history-list">
+        <div style="color:var(--igpa-text-muted);font-size:13px;font-style:italic;">Loading…</div>
+      </div>
+      <div style="margin-top:10px">
+        <button class="igpa-btn igpa-btn-sm igpa-btn-danger" id="opt-clear-history">🗑 Clear History</button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Save bar -->
+  <div class="opt-save-bar">
+    <span class="opt-status" id="opt-status"></span>
+    <button class="igpa-btn igpa-btn-secondary" id="opt-reset">Reset to Defaults</button>
+    <button class="igpa-btn igpa-btn-primary"   id="opt-save">Save Settings</button>
+  </div>
+
+  <script src="options.js"></script>
+</body>
+</html>
