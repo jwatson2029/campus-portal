@@ -6,19 +6,15 @@
   "author": "Infinite GPA Calculator",
 
   "icons": {
-    "16":  "icons/icon-16.png",
-    "48":  "icons/icon-48.png",
+    "16": "icons/icon-16.png",
+    "48": "icons/icon-48.png",
     "128": "icons/icon-128.png"
   },
 
-  "permissions": [
-    "storage",
-    "scripting"
-  ],
+  "permissions": ["storage", "scripting"],
 
   "host_permissions": [
     "https://campus.forsyth.k12.ga.us/*",
-    "https://campus.*.k12.*/*",
     "https://*.infinitecampus.org/*",
     "https://*.infinitecampus.com/*"
   ],
@@ -31,7 +27,6 @@
     {
       "matches": [
         "https://campus.forsyth.k12.ga.us/*",
-        "https://campus.*.k12.*/*",
         "https://*.infinitecampus.org/*",
         "https://*.infinitecampus.com/*"
       ],
@@ -59,7 +54,6 @@
       "resources": ["modal.html", "modal.js", "modal.css", "icons/*.png"],
       "matches": [
         "https://campus.forsyth.k12.ga.us/*",
-        "https://campus.*.k12.*/*",
         "https://*.infinitecampus.org/*",
         "https://*.infinitecampus.com/*"
       ]
