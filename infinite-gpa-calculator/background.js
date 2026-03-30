@@ -26,7 +26,13 @@ chrome.runtime.onInstalled.addListener(({ reason }) => {
         autoCalculate: true,
         showButton: true,
         customWeights: [],
-        gpaScale: 'standard'
+        gpaScale: [
+          { min: 90, max: 100, letter: 'A', points: 4.0 },
+          { min: 80, max: 89,  letter: 'B', points: 3.0 },
+          { min: 70, max: 79,  letter: 'C', points: 2.0 },
+          { min: 60, max: 69,  letter: 'D', points: 1.0 },
+          { min: 0,  max: 59,  letter: 'F', points: 0.0 }
+        ]
       },
       history: []
     });
@@ -38,20 +44,6 @@ chrome.runtime.onInstalled.addListener(({ reason }) => {
 // Pass-through messaging (content ↔ modal)
 // ──────────────────────────────────────────────
 chrome.runtime.onMessage.addListener((msg, sender, sendResponse) => {
-  if (msg.action === 'GET_SETTINGS') {
-    chrome.storage.sync.get(['settings'], (data) => {
-      sendResponse({ settings: data.settings || {} });
-    });
-    return true; // async response
-  }
-
-  if (msg.action === 'SAVE_SETTINGS') {
-    chrome.storage.sync.set({ settings: msg.settings }, () => {
-      sendResponse({ ok: true });
-    });
-    return true;
-  }
-
   if (msg.action === 'SAVE_HISTORY') {
     chrome.storage.sync.get(['history'], (data) => {
       const history = data.history || [];

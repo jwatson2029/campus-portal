@@ -2,7 +2,7 @@
  * content.js — Main content script injected into every Infinite Campus page.
  *
  * Responsibilities:
- *  1. Inject the "🧮 GPA" button into the Infinite Campus navigation bar
+ *  1. Inject the "🧮 GPA" floating button at the top-centre of the page
  *  2. Parse grades from notifications + grade tables
  *  3. Open / close the GPA modal
  *  4. Keep everything in sync via MutationObserver
@@ -462,15 +462,15 @@ function handleKeyDown(e) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   NAV-BAR BUTTON (injected into the Infinite Campus header)
+   FLOATING BUTTON (fixed top-centre of page)
 ═══════════════════════════════════════════════════════════════ */
 
 /**
- * Inject the GPA button into the Infinite Campus navigation bar.
+ * Inject the "🧮 GPA" floating button at the top of the page.
  * Delegates to the __igpaInjectButton helper exposed by inject-button.js,
  * which is loaded before this script.
  */
-function injectNavButton() {
+function injectFloatingButton() {
   if (typeof window.__igpaInjectButton === 'function') {
     window.__igpaInjectButton((e) => {
       e.stopPropagation();
@@ -481,7 +481,7 @@ function injectNavButton() {
         openModal();
       }
     });
-    LOG('Nav GPA button injected.');
+    LOG('GPA button injected.');
   }
 }
 
@@ -494,8 +494,8 @@ let _observer = null;
 function startObserver() {
   if (_observer) return;
   _observer = new MutationObserver(() => {
-    // Re-inject nav button if it was removed from the DOM
-    if (!document.getElementById(BUTTON_ID)) injectNavButton();
+    // Re-inject floating GPA button if it was removed from the DOM
+    if (!document.getElementById(BUTTON_ID)) injectFloatingButton();
 
     // If modal is open, update grades
     const overlay = document.getElementById(OVERLAY_ID);
@@ -521,14 +521,14 @@ function startObserver() {
    INITIALISATION
 ═══════════════════════════════════════════════════════════════ */
 
-async function init() {
+function init() {
   LOG('Initialising on', location.href);
 
-  // Inject nav button (waits for body to be ready)
+  // Inject floating GPA button (waits for body to be ready)
   if (document.body) {
-    injectNavButton();
+    injectFloatingButton();
   } else {
-    document.addEventListener('DOMContentLoaded', injectNavButton, { once: true });
+    document.addEventListener('DOMContentLoaded', injectFloatingButton, { once: true });
   }
 
   // Auto-calculate on page load

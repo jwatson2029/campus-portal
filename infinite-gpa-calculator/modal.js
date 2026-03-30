@@ -77,11 +77,6 @@ document.addEventListener('DOMContentLoaded', () => {
     renderPopup(history[0] || null);
   });
 
-  // Open options page
-  document.getElementById('popup-open-options')?.addEventListener('click', () => {
-    chrome.runtime.openOptionsPage();
-  });
-
   // Open full calculator by messaging the active tab
   document.getElementById('popup-open-page')?.addEventListener('click', () => {
     chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {

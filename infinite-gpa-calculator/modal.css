@@ -463,31 +463,39 @@ body.dark-mode,
   font-size: 11px;
 }
 
-/* ── Nav-bar GPA button ─────────────────────────────────────── */
+/* ── Top-centre floating GPA button ─────────────────────────── */
 #infinite-gpa-btn.igpa-nav-btn {
+  position: fixed;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2147483646; /* just below the modal overlay */
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  padding: 5px 10px;
+  gap: 6px;
+  padding: 6px 20px 6px 16px;
   border: none;
-  background: transparent;
-  color: inherit;
+  border-radius: 0 0 10px 10px;
+  background: var(--igpa-accent);
+  color: #ffffff;
   font-size: 14px;
   font-weight: 600;
   font-family: var(--igpa-font);
   cursor: pointer;
-  border-radius: 6px;
-  transition: background 0.15s;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.28);
+  transition: background 0.15s, box-shadow 0.15s;
   white-space: nowrap;
   user-select: none;
 }
 
 #infinite-gpa-btn.igpa-nav-btn:hover {
-  background: rgba(0, 0, 0, 0.07);
+  background: var(--igpa-accent-h);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.35);
 }
 
 #infinite-gpa-btn.igpa-nav-btn:active {
-  background: rgba(0, 0, 0, 0.12);
+  background: var(--igpa-accent-h);
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Scrollbar (webkit) */
