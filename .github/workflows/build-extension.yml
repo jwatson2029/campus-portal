@@ -1,10 +1,5 @@
 name: Build Infinite GPA Calculator
 
-# ──────────────────────────────────────────────────────────────
-# Triggers: every push to main or any copilot/** branch,
-# and on every PR against main.
-# You can also trigger it manually from the Actions tab.
-# ──────────────────────────────────────────────────────────────
 on:
   push:
     branches:
@@ -19,7 +14,7 @@ on:
     paths:
       - "infinite-gpa-calculator/**"
       - ".github/workflows/build-extension.yml"
-  workflow_dispatch:   # manual "Run workflow" button in the Actions UI
+  workflow_dispatch:
 
 jobs:
   build:
@@ -29,11 +24,9 @@ jobs:
       contents: read
 
     steps:
-      # 1. Check out the repository
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # 2. Validate manifest.json is valid JSON
       - name: Validate manifest.json
         run: |
           echo "Validating manifest.json..."
@@ -50,7 +43,6 @@ jobs:
           print('manifest.json is valid.')
           "
 
-      # 3. Verify all required files exist
       - name: Verify required files
         run: |
           echo "Checking required extension files..."
@@ -62,8 +54,6 @@ jobs:
             "infinite-gpa-calculator/modal.html"
             "infinite-gpa-calculator/modal.js"
             "infinite-gpa-calculator/modal.css"
-            "infinite-gpa-calculator/options.html"
-            "infinite-gpa-calculator/options.js"
             "infinite-gpa-calculator/icons/icon-16.png"
             "infinite-gpa-calculator/icons/icon-48.png"
             "infinite-gpa-calculator/icons/icon-128.png"
@@ -83,31 +73,27 @@ jobs:
           fi
           echo "All required files present."
 
-      # 4. Create the ZIP archive
-      #    The ZIP contains the extension folder directly so Chrome can load it.
       - name: Create ZIP archive
         run: |
           cd infinite-gpa-calculator
           zip -r ../infinite-gpa-calculator.zip . \
             --exclude "*.git*" \
             --exclude "__MACOSX*" \
-            --exclude "*.DS_Store"
+            --exclude "*.DS_Store" \
+            --exclude "*.md"
           cd ..
           echo "Archive size: $(du -sh infinite-gpa-calculator.zip | cut -f1)"
           echo "Archive contents:"
           unzip -l infinite-gpa-calculator.zip
 
-      # 5. Upload the ZIP as a workflow artifact
-      #    After the workflow completes, click the run → scroll to Artifacts → download.
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: infinite-gpa-calculator
           path: infinite-gpa-calculator.zip
-          retention-days: 30   # keep for 30 days
+          retention-days: 30
           if-no-files-found: error
 
-      # 6. Print a helpful summary in the workflow log
       - name: Build summary
         run: |
           echo ""
@@ -125,3 +111,4 @@ jobs:
           echo "  2. Scroll to Artifacts and click 'infinite-gpa-calculator'"
           echo "  3. Unzip and load in chrome://extensions/ (Developer mode ON)"
           echo ""
+
