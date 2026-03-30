@@ -89,7 +89,8 @@ jobs:
           zip -r ../infinite-gpa-calculator.zip . \
             --exclude "*.git*" \
             --exclude "__MACOSX*" \
-            --exclude "*.DS_Store"
+            --exclude "*.DS_Store" \
+            --exclude "*.md"
           cd ..
           echo "Archive size: $(du -sh infinite-gpa-calculator.zip | cut -f1)"
           echo "Archive contents:"
