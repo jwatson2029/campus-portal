@@ -2,7 +2,7 @@
  * content.js — Main content script injected into every Infinite Campus page.
  *
  * Responsibilities:
- *  1. Inject the "🧮 GPA" floating button (fixed, top-center of screen)
+ *  1. Inject the "🧮 GPA" button into the Infinite Campus navigation bar
  *  2. Parse grades from notifications + grade tables
  *  3. Open / close the GPA modal
  *  4. Keep everything in sync via MutationObserver
@@ -462,36 +462,27 @@ function handleKeyDown(e) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   FLOATING BUTTON (fixed, top-center of screen)
+   NAV-BAR BUTTON (injected into the Infinite Campus header)
 ═══════════════════════════════════════════════════════════════ */
 
 /**
- * Create and inject a fixed floating "🧮 GPA" button at the top-center
- * of the screen. The button is only created once and persists across
- * page navigation (SPA-style updates).
+ * Inject the GPA button into the Infinite Campus navigation bar.
+ * Delegates to the __igpaInjectButton helper exposed by inject-button.js,
+ * which is loaded before this script.
  */
-function createFloatingButton() {
-  if (document.getElementById(BUTTON_ID)) return; // already exists
-
-  const btn = document.createElement('button');
-  btn.id = BUTTON_ID;
-  btn.className = 'igpa-floating-btn';
-  btn.title = 'Calculate GPA (Ctrl+Shift+G)';
-  btn.setAttribute('aria-label', 'Open GPA Calculator');
-  btn.innerHTML = `<span class="igpa-floating-icon">🧮</span><span class="igpa-floating-label">GPA</span>`;
-
-  btn.addEventListener('click', (e) => {
-    e.stopPropagation();
-    const overlay = document.getElementById(OVERLAY_ID);
-    if (overlay) {
-      overlay.style.display = overlay.style.display === 'none' ? 'flex' : 'none';
-    } else {
-      openModal();
-    }
-  });
-
-  document.body.appendChild(btn);
-  LOG('Floating GPA button injected.');
+function injectNavButton() {
+  if (typeof window.__igpaInjectButton === 'function') {
+    window.__igpaInjectButton((e) => {
+      e.stopPropagation();
+      const overlay = document.getElementById(OVERLAY_ID);
+      if (overlay) {
+        overlay.style.display = overlay.style.display === 'none' ? 'flex' : 'none';
+      } else {
+        openModal();
+      }
+    });
+    LOG('Nav GPA button injected.');
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -503,8 +494,8 @@ let _observer = null;
 function startObserver() {
   if (_observer) return;
   _observer = new MutationObserver(() => {
-    // Re-create floating button if it was removed from the DOM
-    if (!document.getElementById(BUTTON_ID)) createFloatingButton();
+    // Re-inject nav button if it was removed from the DOM
+    if (!document.getElementById(BUTTON_ID)) injectNavButton();
 
     // If modal is open, update grades
     const overlay = document.getElementById(OVERLAY_ID);
@@ -533,11 +524,11 @@ function startObserver() {
 async function init() {
   LOG('Initialising on', location.href);
 
-  // Create the floating button (waits for body to be ready)
+  // Inject nav button (waits for body to be ready)
   if (document.body) {
-    createFloatingButton();
+    injectNavButton();
   } else {
-    document.addEventListener('DOMContentLoaded', createFloatingButton, { once: true });
+    document.addEventListener('DOMContentLoaded', injectNavButton, { once: true });
   }
 
   // Auto-calculate on page load
