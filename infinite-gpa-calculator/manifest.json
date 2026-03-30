@@ -1,0 +1,68 @@
+{
+  "manifest_version": 3,
+  "name": "Infinite GPA Calculator",
+  "version": "1.0.0",
+  "description": "Instantly calculates your Unweighted & Weighted GPA from Infinite Campus grades.",
+  "author": "Infinite GPA Calculator",
+
+  "icons": {
+    "16":  "icons/icon-16.png",
+    "48":  "icons/icon-48.png",
+    "128": "icons/icon-128.png"
+  },
+
+  "permissions": [
+    "storage",
+    "scripting"
+  ],
+
+  "host_permissions": [
+    "https://campus.forsyth.k12.ga.us/*",
+    "https://campus.*.k12.*/*",
+    "https://*.infinitecampus.org/*",
+    "https://*.infinitecampus.com/*"
+  ],
+
+  "background": {
+    "service_worker": "background.js"
+  },
+
+  "content_scripts": [
+    {
+      "matches": [
+        "https://campus.forsyth.k12.ga.us/*",
+        "https://campus.*.k12.*/*",
+        "https://*.infinitecampus.org/*",
+        "https://*.infinitecampus.com/*"
+      ],
+      "js": ["content.js"],
+      "css": ["modal.css"],
+      "run_at": "document_idle",
+      "all_frames": true
+    }
+  ],
+
+  "options_page": "options.html",
+
+  "commands": {
+    "open-gpa-calculator": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+G",
+        "mac": "Command+Shift+G"
+      },
+      "description": "Open the GPA Calculator"
+    }
+  },
+
+  "web_accessible_resources": [
+    {
+      "resources": ["modal.html", "modal.js", "modal.css", "icons/*.png"],
+      "matches": [
+        "https://campus.forsyth.k12.ga.us/*",
+        "https://campus.*.k12.*/*",
+        "https://*.infinitecampus.org/*",
+        "https://*.infinitecampus.com/*"
+      ]
+    }
+  ]
+}
