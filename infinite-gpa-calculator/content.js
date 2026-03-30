@@ -2,10 +2,10 @@
  * content.js — Main content script injected into every Infinite Campus page.
  *
  * Responsibilities:
- *  1. Inject the "📊 GPA" button into the IC top nav bar
+ *  1. Inject the "🧮 GPA" floating button (fixed, top-center of screen)
  *  2. Parse grades from notifications + grade tables
  *  3. Open / close the GPA modal
- *  4. Keep everything in sync via MutationObserver + polling fallback
+ *  4. Keep everything in sync via MutationObserver
  */
 
 /* ═══════════════════════════════════════════════════════════════
@@ -18,20 +18,6 @@ const WARN = (...args) => console.warn('[GPA Calc]', ...args);
 const BUTTON_ID   = 'infinite-gpa-btn';
 const MODAL_ID    = 'infinite-gpa-modal';
 const OVERLAY_ID  = 'infinite-gpa-overlay';
-const POLL_MS     = 2000; // fallback poll interval
-
-/** Selectors for the Infinite Campus nav bar (various IC versions) */
-const NAV_SELECTORS = [
-  '.header-icons',
-  '.ic-header__icons',
-  '[class*="header"] [class*="icons"]',
-  'header nav',
-  '.app-header .right',
-  '.header .right-section',
-  'ic-header-button',       // web-component version
-  '#header .icons',
-  '.topNav .right'
-];
 
 /* ═══════════════════════════════════════════════════════════════
    GRADE PARSING ENGINE
@@ -193,13 +179,7 @@ function pctToUnweightedPoints(pct) {
 }
 
 /** Auto-detect weighting boost for a course name */
-function getWeightBoost(courseName, customWeights = []) {
-  // Custom weights override built-in rules
-  for (const rule of customWeights) {
-    if (courseName.toLowerCase().includes(rule.keyword.toLowerCase())) {
-      return rule.boost;
-    }
-  }
+function getWeightBoost(courseName) {
   const lower = courseName.toLowerCase();
   if (/\bap\b|advanced placement/i.test(lower)) return 1.0;
   if (/honors|concept\s*&\s*connect|concept and connect/i.test(lower)) return 0.5;
@@ -219,16 +199,14 @@ function pctToLetter(pct) {
  * Main GPA calculation.
  * Returns { unweighted, weighted, courses }
  */
-function calculateGPA(grades, settings = {}) {
-  const customWeights = settings.customWeights || [];
-
+function calculateGPA(grades) {
   if (grades.length === 0) {
     return { unweighted: null, weighted: null, courses: [] };
   }
 
   const courses = grades.map(g => {
     const unweightedPts = pctToUnweightedPoints(g.pct);
-    const boost = getWeightBoost(g.courseName, customWeights);
+    const boost = getWeightBoost(g.courseName);
     const weightedPts = unweightedPts > 0 ? Math.min(5.0, unweightedPts + boost) : 0.0; // no boost on F
     return {
       ...g,
@@ -236,7 +214,7 @@ function calculateGPA(grades, settings = {}) {
       unweightedPoints: unweightedPts,
       weightBoost: boost,
       weightedPoints: weightedPts,
-      credits: 1 // default — user can override in settings
+      credits: 1
     };
   });
 
@@ -257,7 +235,7 @@ function calculateGPA(grades, settings = {}) {
    MODAL (inline — injected into the page DOM)
 ═══════════════════════════════════════════════════════════════ */
 
-function buildModalHTML(result, settings) {
+function buildModalHTML(result) {
   const { unweighted, weighted, courses, totalCredits, calculatedAt } = result;
 
   const noGrades = !courses || courses.length === 0;
@@ -280,12 +258,11 @@ function buildModalHTML(result, settings) {
     <!-- Header -->
     <div class="igpa-modal-header">
       <div class="igpa-header-left">
-        <span class="igpa-logo">📊</span>
+        <span class="igpa-logo">🧮</span>
         <span class="igpa-title">Infinite GPA Calculator</span>
       </div>
       <div class="igpa-header-right">
-        <button id="igpa-settings-btn" class="igpa-icon-btn" title="Settings" aria-label="Settings">⚙️</button>
-        <button id="igpa-close-btn"    class="igpa-icon-btn igpa-close" title="Close" aria-label="Close">✕</button>
+        <button id="igpa-close-btn" class="igpa-icon-btn igpa-close" title="Close" aria-label="Close">✕</button>
       </div>
     </div>
 
@@ -334,27 +311,6 @@ function buildModalHTML(result, settings) {
           ${rowsHTML}
         </tbody>
       </table>
-    </div>
-
-    <!-- Settings Panel (hidden by default) -->
-    <div id="igpa-settings-panel" class="igpa-settings-panel" style="display:none;">
-      <h3 class="igpa-settings-title">⚙️ Settings</h3>
-      <label class="igpa-setting-row">
-        <span>Auto-calculate on page load</span>
-        <input type="checkbox" id="igpa-auto-calc" ${settings.autoCalculate !== false ? 'checked' : ''}>
-      </label>
-      <label class="igpa-setting-row">
-        <span>Show GPA button in nav bar</span>
-        <input type="checkbox" id="igpa-show-btn" ${settings.showButton !== false ? 'checked' : ''}>
-      </label>
-      <div class="igpa-setting-section">
-        <div class="igpa-setting-label">Custom Weighting Rules</div>
-        <div id="igpa-custom-weights" class="igpa-custom-weights"></div>
-        <button id="igpa-add-weight" class="igpa-btn igpa-btn-sm igpa-btn-secondary">+ Add Rule</button>
-      </div>
-      <div class="igpa-settings-actions">
-        <button id="igpa-save-settings" class="igpa-btn igpa-btn-primary">Save Settings</button>
-      </div>
     </div>
 
     <div class="igpa-footer">
@@ -435,31 +391,10 @@ function attachTableSorting(courses) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   SETTINGS PANEL LOGIC
-═══════════════════════════════════════════════════════════════ */
-
-function renderCustomWeights(settings) {
-  const container = document.getElementById('igpa-custom-weights');
-  if (!container) return;
-  container.innerHTML = '';
-  (settings.customWeights || []).forEach((rule, i) => {
-    const row = document.createElement('div');
-    row.className = 'igpa-weight-row';
-    row.innerHTML = `
-      <input class="igpa-input" type="text" placeholder="Keyword" value="${escapeHTML(rule.keyword)}" data-idx="${i}" data-field="keyword">
-      <input class="igpa-input igpa-input-sm" type="number" step="0.5" min="0" max="2" placeholder="Boost" value="${rule.boost}" data-idx="${i}" data-field="boost">
-      <button class="igpa-btn igpa-btn-sm igpa-btn-danger" data-remove="${i}">✕</button>
-    `;
-    container.appendChild(row);
-  });
-}
-
-/* ═══════════════════════════════════════════════════════════════
    MODAL LIFECYCLE
 ═══════════════════════════════════════════════════════════════ */
 
 let _lastResult = null;
-let _settings = {};
 
 function openModal() {
   if (document.getElementById(OVERLAY_ID)) {
@@ -468,10 +403,10 @@ function openModal() {
   }
 
   const grades  = parseAllGrades();
-  _lastResult   = calculateGPA(grades, _settings);
+  _lastResult   = calculateGPA(grades);
 
   const wrapper = document.createElement('div');
-  wrapper.innerHTML = buildModalHTML(_lastResult, _settings);
+  wrapper.innerHTML = buildModalHTML(_lastResult);
   document.body.appendChild(wrapper.firstElementChild);
 
   // Save snapshot to history
@@ -518,54 +453,6 @@ function bindModalEvents(result) {
   // Table sorting
   if (result.courses?.length) attachTableSorting(result.courses);
 
-  // Settings toggle
-  document.getElementById('igpa-settings-btn')?.addEventListener('click', () => {
-    const panel = document.getElementById('igpa-settings-panel');
-    if (!panel) return;
-    const visible = panel.style.display !== 'none';
-    panel.style.display = visible ? 'none' : 'block';
-    renderCustomWeights(_settings);
-  });
-
-  // Add custom weight rule
-  document.getElementById('igpa-add-weight')?.addEventListener('click', () => {
-    _settings.customWeights = _settings.customWeights || [];
-    _settings.customWeights.push({ keyword: '', boost: 0.5 });
-    renderCustomWeights(_settings);
-  });
-
-  // Save settings
-  document.getElementById('igpa-save-settings')?.addEventListener('click', () => {
-    _settings.autoCalculate = document.getElementById('igpa-auto-calc')?.checked ?? true;
-    _settings.showButton    = document.getElementById('igpa-show-btn')?.checked ?? true;
-
-    // Collect custom weight edits
-    const rows = document.querySelectorAll('.igpa-weight-row');
-    _settings.customWeights = [];
-    rows.forEach(row => {
-      const kw = row.querySelector('[data-field="keyword"]')?.value.trim();
-      const bv = parseFloat(row.querySelector('[data-field="boost"]')?.value || 0);
-      if (kw) _settings.customWeights.push({ keyword: kw, boost: bv });
-    });
-
-    chrome.runtime.sendMessage({ action: 'SAVE_SETTINGS', settings: _settings });
-
-    // Update button visibility
-    const btn = document.getElementById(BUTTON_ID);
-    if (btn) btn.style.display = _settings.showButton === false ? 'none' : '';
-
-    LOG('Settings saved.', _settings);
-  });
-
-  // Remove custom weight rule (delegated)
-  document.getElementById('igpa-custom-weights')?.addEventListener('click', (e) => {
-    const idx = e.target.dataset.remove;
-    if (idx !== undefined) {
-      _settings.customWeights.splice(parseInt(idx, 10), 1);
-      renderCustomWeights(_settings);
-    }
-  });
-
   // Keyboard close
   document.addEventListener('keydown', handleKeyDown);
 }
@@ -575,53 +462,36 @@ function handleKeyDown(e) {
 }
 
 /* ═══════════════════════════════════════════════════════════════
-   NAV BUTTON INJECTION
+   FLOATING BUTTON (fixed, top-center of screen)
 ═══════════════════════════════════════════════════════════════ */
 
-function findNavContainer() {
-  for (const sel of NAV_SELECTORS) {
-    const el = document.querySelector(sel);
-    if (el) return el;
-  }
-  return null;
-}
-
-function injectButton() {
-  if (document.getElementById(BUTTON_ID)) return; // already injected
-
-  const nav = findNavContainer();
-  if (!nav) {
-    WARN('Nav container not found — will retry.');
-    return false;
-  }
+/**
+ * Create and inject a fixed floating "🧮 GPA" button at the top-center
+ * of the screen. The button is only created once and persists across
+ * page navigation (SPA-style updates).
+ */
+function createFloatingButton() {
+  if (document.getElementById(BUTTON_ID)) return; // already exists
 
   const btn = document.createElement('button');
   btn.id = BUTTON_ID;
-  btn.className = 'header-icon-button igpa-nav-btn';
+  btn.className = 'igpa-floating-btn';
   btn.title = 'Calculate GPA (Ctrl+Shift+G)';
   btn.setAttribute('aria-label', 'Open GPA Calculator');
-  btn.innerHTML = `<i class="fa fa-calculator" aria-hidden="true"></i><span class="igpa-btn-label">GPA</span>`;
+  btn.innerHTML = `<span class="igpa-floating-icon">🧮</span><span class="igpa-floating-label">GPA</span>`;
 
   btn.addEventListener('click', (e) => {
     e.stopPropagation();
-    if (document.getElementById(OVERLAY_ID)) {
-      const overlay = document.getElementById(OVERLAY_ID);
+    const overlay = document.getElementById(OVERLAY_ID);
+    if (overlay) {
       overlay.style.display = overlay.style.display === 'none' ? 'flex' : 'none';
     } else {
       openModal();
     }
   });
 
-  // Prefer inserting before a bell/notification icon; otherwise append
-  const bell = nav.querySelector('[class*="bell"], [class*="notif"], [aria-label*="notification" i]');
-  if (bell) {
-    nav.insertBefore(btn, bell);
-  } else {
-    nav.appendChild(btn);
-  }
-
-  LOG('GPA button injected into nav bar.');
-  return true;
+  document.body.appendChild(btn);
+  LOG('Floating GPA button injected.');
 }
 
 /* ═══════════════════════════════════════════════════════════════
@@ -629,20 +499,19 @@ function injectButton() {
 ═══════════════════════════════════════════════════════════════ */
 
 let _observer = null;
-let _pollTimer = null;
 
 function startObserver() {
   if (_observer) return;
   _observer = new MutationObserver(() => {
-    // Re-inject button if it disappeared
-    if (!document.getElementById(BUTTON_ID)) injectButton();
+    // Re-create floating button if it was removed from the DOM
+    if (!document.getElementById(BUTTON_ID)) createFloatingButton();
 
     // If modal is open, update grades
     const overlay = document.getElementById(OVERLAY_ID);
     if (overlay && overlay.style.display !== 'none') {
       const newGrades = parseAllGrades();
       if (newGrades.length > 0) {
-        const newResult = calculateGPA(newGrades, _settings);
+        const newResult = calculateGPA(newGrades);
         // Only refresh if GPA changed meaningfully
         if (_lastResult &&
             Math.abs((newResult.unweighted || 0) - (_lastResult.unweighted || 0)) > 0.001) {
@@ -657,17 +526,6 @@ function startObserver() {
   LOG('MutationObserver started.');
 }
 
-function startPolling() {
-  if (_pollTimer) return;
-  _pollTimer = setInterval(() => {
-    if (!document.getElementById(BUTTON_ID)) {
-      LOG('Polling: button missing, re-injecting...');
-      injectButton();
-    }
-  }, POLL_MS);
-  LOG(`Polling fallback started (every ${POLL_MS}ms).`);
-}
-
 /* ═══════════════════════════════════════════════════════════════
    INITIALISATION
 ═══════════════════════════════════════════════════════════════ */
@@ -675,38 +533,23 @@ function startPolling() {
 async function init() {
   LOG('Initialising on', location.href);
 
-  // Load settings
-  try {
-    const resp = await chrome.runtime.sendMessage({ action: 'GET_SETTINGS' });
-    _settings = resp?.settings || {};
-  } catch (_) {
-    _settings = {};
-  }
-
-  // Inject button (with retry on DOMContentLoaded / load)
-  const injected = injectButton();
-  if (!injected) {
-    // Wait for DOM to be more ready
-    const retryFn = () => { injectButton(); };
-    document.addEventListener('DOMContentLoaded', retryFn, { once: true });
-    window.addEventListener('load', retryFn, { once: true });
-    setTimeout(retryFn, 1000);
-    setTimeout(retryFn, 3000);
+  // Create the floating button (waits for body to be ready)
+  if (document.body) {
+    createFloatingButton();
+  } else {
+    document.addEventListener('DOMContentLoaded', createFloatingButton, { once: true });
   }
 
   // Auto-calculate on page load
-  if (_settings.autoCalculate !== false) {
-    window.addEventListener('load', () => {
-      const grades = parseAllGrades();
-      if (grades.length > 0) {
-        _lastResult = calculateGPA(grades, _settings);
-        LOG('Auto-calculated GPA:', _lastResult.unweighted, '/', _lastResult.weighted);
-      }
-    }, { once: true });
-  }
+  window.addEventListener('load', () => {
+    const grades = parseAllGrades();
+    if (grades.length > 0) {
+      _lastResult = calculateGPA(grades);
+      LOG('Auto-calculated GPA:', _lastResult.unweighted, '/', _lastResult.weighted);
+    }
+  }, { once: true });
 
   startObserver();
-  startPolling();
 }
 
 // Listen for keyboard shortcut from background.js
