@@ -20,8 +20,8 @@
     btn.title = 'Calculate GPA (Ctrl+Shift+G)';
     btn.setAttribute('aria-label', 'Open GPA Calculator');
     btn.innerHTML = `
-      <span class="igpa-btn-icon">🧮</span>
-      <span class="igpa-btn-label">GPA</span>
+      <span class="igpa-btn-icon" aria-hidden="true">🧮</span>
+      <span class="igpa-btn-label" aria-hidden="true">GPA</span>
     `;
 
     if (typeof onClickHandler === 'function') {
