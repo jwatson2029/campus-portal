@@ -187,7 +187,14 @@ function buildModalHTML(result) {
     : courses.map(c => `
         <tr>
           <td class="igpa-course-name">${escapeHTML(c.courseName)}</td>
-          <td>${c.pct.toFixed(2)}%</td>
+          <td class="igpa-pct-cell">
+            <div class="igpa-pct-bar-wrap">
+              <span class="igpa-pct-label">${c.pct.toFixed(2)}%</span>
+              <div class="igpa-pct-bar-bg">
+                <div class="igpa-pct-bar grade-${c.letter}" style="width:${Math.min(c.pct, 100).toFixed(1)}%"></div>
+              </div>
+            </div>
+          </td>
           <td><span class="igpa-letter igpa-letter-${c.letter}">${c.letter}</span></td>
           <td>${c.unweightedPoints.toFixed(1)}</td>
           <td>${c.weightedPoints.toFixed(1)}${c.weightBoost > 0 ? `<sup class="igpa-boost">+${c.weightBoost}</sup>` : ''}</td>
@@ -199,10 +206,14 @@ function buildModalHTML(result) {
     <!-- Header -->
     <div class="igpa-modal-header">
       <div class="igpa-header-left">
-        <span class="igpa-logo">🧮</span>
-        <span class="igpa-title">Infinite GPA Calculator</span>
+        <div class="igpa-logo">🧮</div>
+        <div>
+          <div class="igpa-title">Infinite GPA Calculator</div>
+          <div class="igpa-title-sub">Infinite Campus grade tracker</div>
+        </div>
       </div>
       <div class="igpa-header-right">
+        <button id="igpa-refresh-btn" class="igpa-icon-btn" title="Refresh grades" aria-label="Refresh grades">↻</button>
         <button id="igpa-close-btn" class="igpa-icon-btn igpa-close" title="Close" aria-label="Close">✕</button>
       </div>
     </div>
@@ -226,13 +237,12 @@ function buildModalHTML(result) {
       </div>
     </div>
 
-    <!-- Timestamp + Refresh -->
+    <!-- Toolbar -->
     <div class="igpa-toolbar">
-      <span class="igpa-ts">Last updated: ${ts}</span>
+      <span class="igpa-ts">🕐 Last updated: ${ts}</span>
       <div class="igpa-toolbar-actions">
-        <button id="igpa-refresh-btn" class="igpa-btn igpa-btn-secondary">🔄 Refresh Grades</button>
-        <button id="igpa-export-csv"  class="igpa-btn igpa-btn-secondary">⬇ CSV</button>
-        <button id="igpa-export-json" class="igpa-btn igpa-btn-secondary">⬇ JSON</button>
+        <button id="igpa-export-csv"  class="igpa-btn igpa-btn-secondary igpa-btn-sm">⬇ CSV</button>
+        <button id="igpa-export-json" class="igpa-btn igpa-btn-secondary igpa-btn-sm">⬇ JSON</button>
       </div>
     </div>
 
@@ -242,7 +252,7 @@ function buildModalHTML(result) {
         <thead>
           <tr>
             <th data-col="courseName">Course <span class="igpa-sort-icon">↕</span></th>
-            <th data-col="pct">Grade % <span class="igpa-sort-icon">↕</span></th>
+            <th data-col="pct">Grade <span class="igpa-sort-icon">↕</span></th>
             <th data-col="letter">Letter</th>
             <th data-col="unweightedPoints">UW Pts <span class="igpa-sort-icon">↕</span></th>
             <th data-col="weightedPoints">W Pts <span class="igpa-sort-icon">↕</span></th>
@@ -255,7 +265,9 @@ function buildModalHTML(result) {
     </div>
 
     <div class="igpa-footer">
-      Infinite GPA Calculator · Press <kbd>Ctrl+Shift+G</kbd> to toggle
+      <span>Infinite GPA Calculator</span>
+      <span>·</span>
+      <span>Press <kbd>Ctrl+Shift+G</kbd> to toggle</span>
     </div>
   </div>
 </div>`;
@@ -321,7 +333,14 @@ function attachTableSorting(courses) {
       tbody.innerHTML = sorted.map(c => `
         <tr>
           <td class="igpa-course-name">${escapeHTML(c.courseName)}</td>
-          <td>${c.pct.toFixed(2)}%</td>
+          <td class="igpa-pct-cell">
+            <div class="igpa-pct-bar-wrap">
+              <span class="igpa-pct-label">${c.pct.toFixed(2)}%</span>
+              <div class="igpa-pct-bar-bg">
+                <div class="igpa-pct-bar grade-${c.letter}" style="width:${Math.min(c.pct, 100).toFixed(1)}%"></div>
+              </div>
+            </div>
+          </td>
           <td><span class="igpa-letter igpa-letter-${c.letter}">${c.letter}</span></td>
           <td>${c.unweightedPoints.toFixed(1)}</td>
           <td>${c.weightedPoints.toFixed(1)}${c.weightBoost > 0 ? `<sup class="igpa-boost">+${c.weightBoost}</sup>` : ''}</td>

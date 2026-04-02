@@ -13,7 +13,7 @@
     btn.setAttribute('aria-label', 'Open GPA Calculator');
     btn.innerHTML = `
       <span class="igpa-btn-icon" aria-hidden="true">🧮</span>
-      <span class="igpa-btn-label" aria-hidden="true">GPA</span>
+      <span class="igpa-btn-label" aria-hidden="true">My GPA</span>
     `;
 
     if (typeof onClickHandler === 'function') {
