@@ -32,7 +32,7 @@ function renderPopup(entry) {
       <div class="popup-course-row">
         <span class="popup-course-name" title="${escapeHTML(c.courseName)}">${escapeHTML(c.courseName)}</span>
         <div class="popup-course-meta">
-          <span style="font-size:12px;color:var(--igpa-text-muted)">${c.pct.toFixed(1)}%</span>
+          <span class="popup-pct">${c.pct.toFixed(1)}%</span>
           <span class="igpa-letter igpa-letter-${c.letter}">${c.letter}</span>
         </div>
       </div>
