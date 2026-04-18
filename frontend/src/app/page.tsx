@@ -1,3 +1,4 @@
+import Image from "next/image";
 import CTAButton from "@/components/CTAButton";
 import FeatureCard from "@/components/FeatureCard";
 import type { Metadata } from "next";
@@ -6,16 +7,31 @@ const CHROME_STORE_URL =
   "https://chromewebstore.google.com/detail/Studently/mbojfndockcpgcdlbpmcheiimdhndbho";
 
 export const metadata: Metadata = {
-  title: "Studently – Better Infinite Campus Dashboard",
+  title: "Studently – Better Infinite Campus Dashboard | Free Educational Tool",
   description:
-    "Studently is a Chrome extension that gives students a better way to view grades on Infinite Campus. Clean UI, fast loading, GPA tracking, and more.",
+    "Studently is a free educational Chrome extension that gives students a better way to view grades on Infinite Campus. Clean UI, fast loading, GPA tracking, assignment monitoring, and more. Built for educational purposes to help students succeed.",
   keywords: [
     "Infinite Campus alternative UI",
     "student grade tracker",
     "better way to view grades",
     "Infinite Campus Chrome extension",
     "Studently",
+    "educational tool",
+    "free grade tracker",
+    "student dashboard",
+    "GPA calculator",
+    "academic progress",
+    "school grades app",
+    "high school grades",
+    "student productivity tool",
   ],
+  alternates: {
+    canonical: "https://studently.app",
+  },
+  other: {
+    "educational-purpose":
+      "This page describes an educational Chrome extension that helps students track academic grades and progress on Infinite Campus.",
+  },
 };
 
 const features = [
@@ -80,7 +96,7 @@ export default function HomePage() {
 
           <h1 className="animate-fade-in mt-8 text-4xl font-bold leading-tight tracking-tight sm:text-5xl lg:text-6xl">
             A better way to use{" "}
-            <span className="bg-gradient-to-r from-accent to-purple-500 bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-accent to-blue-400 bg-clip-text text-transparent">
               Infinite Campus
             </span>
           </h1>
@@ -91,9 +107,13 @@ export default function HomePage() {
 
           <div className="animate-fade-in-delay mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
             <CTAButton href={CHROME_STORE_URL} external>
-              <svg className="h-5 w-5" viewBox="0 0 24 24" fill="currentColor">
-                <path d="M12 0C8.21 0 4.831 1.757 2.632 4.501l3.953 6.848A5.454 5.454 0 0 1 12 6.545h10.691A12 12 0 0 0 12 0zM1.931 5.47A11.943 11.943 0 0 0 0 12c0 6.012 4.42 10.991 10.189 11.864l3.953-6.847a5.45 5.45 0 0 1-6.865-2.29zm13.342 2.166a5.446 5.446 0 0 1 1.45 7.09l.002.001-3.952 6.848c.404.037.812.06 1.227.06 6.627 0 12-5.373 12-12 0-1.006-.127-1.983-.364-2.917H15.31zM12 8.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7z" />
-              </svg>
+              <Image
+                src="/chrome-logo.png"
+                alt="Chrome"
+                width={20}
+                height={20}
+                className="h-5 w-5"
+              />
               Install Studently
             </CTAButton>
             <CTAButton href="#features" variant="secondary">
@@ -164,7 +184,7 @@ export default function HomePage() {
             </p>
           </div>
 
-          <div className="mt-16 overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-accent/5 to-purple-500/5 p-1">
+          <div className="mt-16 overflow-hidden rounded-2xl border border-border bg-gradient-to-br from-accent/5 to-blue-400/5 p-1">
             <div className="rounded-xl bg-background p-6 sm:p-8">
               {/* Mock Dashboard */}
               <div className="space-y-4">

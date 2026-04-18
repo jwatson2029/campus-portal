@@ -5,9 +5,16 @@ const CHROME_STORE_URL =
   "https://chromewebstore.google.com/detail/Studently/mbojfndockcpgcdlbpmcheiimdhndbho";
 
 export const metadata: Metadata = {
-  title: "About",
+  title: "About Studently – Our Educational Mission",
   description:
-    "Learn about Studently — the Chrome extension that gives students a better Infinite Campus experience with a clean, modern dashboard.",
+    "Learn about Studently — a free educational Chrome extension built by students, for students. We provide a better Infinite Campus experience with a clean, modern dashboard designed for educational purposes.",
+  alternates: {
+    canonical: "https://studently.app/about",
+  },
+  other: {
+    "educational-purpose":
+      "This page describes the educational mission behind Studently, a tool designed to help students succeed academically.",
+  },
 };
 
 export default function AboutPage() {
@@ -67,7 +74,7 @@ export default function AboutPage() {
         </section>
       </div>
 
-      <div className="mt-16 rounded-2xl border border-border bg-gradient-to-r from-accent/5 to-purple-500/5 p-8 text-center">
+      <div className="mt-16 rounded-2xl border border-border bg-gradient-to-r from-accent/5 to-blue-400/5 p-8 text-center">
         <h2 className="text-2xl font-bold">Try Studently today</h2>
         <p className="mt-2 text-muted">
           It takes less than a minute to install. See the difference for yourself.

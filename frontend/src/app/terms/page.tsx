@@ -3,7 +3,10 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Terms of Service",
   description:
-    "Studently's terms of service — understand the terms governing the use of our Chrome extension and website.",
+    "Studently's terms of service — understand the terms governing the use of our educational Chrome extension and website. Studently is intended for educational use by students.",
+  alternates: {
+    canonical: "https://studently.app/terms",
+  },
 };
 
 export default function TermsPage() {
