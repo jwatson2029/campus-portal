@@ -71,24 +71,13 @@ jobs:
           fi
           echo "All required files present."
 
-      - name: Create ZIP archive
-        run: |
-          cd infinite-gpa-calculator
-          zip -r ../infinite-gpa-calculator.zip . \
-            --exclude "*.git*" \
-            --exclude "__MACOSX*" \
-            --exclude "*.DS_Store" \
-            --exclude "*.md"
-          cd ..
-          echo "Archive size: $(du -sh infinite-gpa-calculator.zip | cut -f1)"
-          echo "Archive contents:"
-          unzip -l infinite-gpa-calculator.zip
-
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: infinite-gpa-calculator
-          path: infinite-gpa-calculator.zip
+          path: |
+            infinite-gpa-calculator/*
+            !infinite-gpa-calculator/*.md
           retention-days: 30
           if-no-files-found: error
 
@@ -99,7 +88,7 @@ jobs:
           echo "  ✅  Studently extension built!"
           echo "════════════════════════════════════════════"
           echo ""
-          echo "  📦  Artifact:  infinite-gpa-calculator.zip"
+          echo "  📦  Artifact:  infinite-gpa-calculator (downloaded as .zip)"
           echo "  📅  Built at:  $(date -u '+%Y-%m-%d %H:%M:%S UTC')"
           echo "  🔖  Commit:    ${{ github.sha }}"
           echo "  🌿  Branch:    ${{ github.ref_name }}"
@@ -107,6 +96,6 @@ jobs:
           echo "  HOW TO INSTALL:"
           echo "  1. Go to the Actions tab → this workflow run"
           echo "  2. Scroll to Artifacts and click 'infinite-gpa-calculator'"
-          echo "  3. Unzip and load in chrome://extensions/ (Developer mode ON)"
+          echo "  3. Use the downloaded ZIP directly for Chrome Web Store upload"
+          echo "  4. Unzip only for local loading in chrome://extensions/ (Developer mode ON)"
           echo ""
-
