@@ -3,7 +3,10 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Privacy Policy",
   description:
-    "Studently's privacy policy — learn how we handle your data and protect your privacy.",
+    "Studently's privacy policy — learn how we handle your data and protect student privacy. Studently is a free educational tool that does not collect or sell personal data.",
+  alternates: {
+    canonical: "https://studently.app/privacy",
+  },
 };
 
 export default function PrivacyPage() {

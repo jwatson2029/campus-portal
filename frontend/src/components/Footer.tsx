@@ -59,9 +59,12 @@ export default function Footer() {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-border pt-6 text-center">
+        <div className="mt-12 border-t border-border pt-6 text-center space-y-2">
           <p className="text-xs text-muted">
             &copy; {new Date().getFullYear()} Studently. All rights reserved.
+          </p>
+          <p className="text-xs text-muted">
+            Studently is an educational tool designed to help students track academic progress. This extension is intended for educational purposes only and is not affiliated with Infinite Campus.
           </p>
         </div>
       </div>

@@ -3,13 +3,17 @@ import type { Metadata } from "next";
 export const metadata: Metadata = {
   title: "Uninstall Feedback",
   description:
-    "Help us improve Studently by sharing why you uninstalled the extension.",
+    "Help us improve Studently by sharing why you uninstalled the educational Chrome extension. Your feedback helps us build a better tool for students.",
+  robots: {
+    index: false,
+    follow: false,
+  },
 };
 
 export default function UninstallFeedbackPage() {
   return (
     <div className="relative min-h-[80vh]">
-      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-accent/5 via-purple-500/5 to-transparent" />
+      <div className="absolute inset-0 -z-10 bg-gradient-to-br from-accent/5 via-blue-400/5 to-transparent" />
 
       <div className="mx-auto max-w-2xl px-6 py-24">
         <div className="animate-fade-in rounded-2xl border border-border bg-background/80 p-8 shadow-xl shadow-accent/5 backdrop-blur-sm sm:p-12">
