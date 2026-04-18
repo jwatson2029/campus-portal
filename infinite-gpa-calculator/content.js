@@ -176,15 +176,8 @@ function calculateGPA(grades) {
   };
 }
 
-function buildModalHTML(result) {
-  const { unweighted, weighted, courses, totalCredits, calculatedAt } = result;
-
-  const noGrades = !courses || courses.length === 0;
-  const ts = calculatedAt ? new Date(calculatedAt).toLocaleString() : '—';
-
-  const rowsHTML = noGrades
-    ? `<tr><td colspan="5" class="igpa-empty">No grades found yet — check your Grades tab.</td></tr>`
-    : courses.map(c => `
+function buildCourseRowHTML(c) {
+  return `
         <tr>
           <td class="igpa-course-name">${escapeHTML(c.courseName)}</td>
           <td class="igpa-pct-cell">
@@ -198,15 +191,27 @@ function buildModalHTML(result) {
           <td><span class="igpa-letter igpa-letter-${c.letter}">${c.letter}</span></td>
           <td>${c.unweightedPoints.toFixed(1)}</td>
           <td>${c.weightedPoints.toFixed(1)}${c.weightBoost > 0 ? `<sup class="igpa-boost">+${c.weightBoost}</sup>` : ''}</td>
-        </tr>`).join('');
+        </tr>`;
+}
+
+function buildModalHTML(result) {
+  const { unweighted, weighted, courses, totalCredits, calculatedAt } = result;
+
+  const noGrades = !courses || courses.length === 0;
+  const ts = calculatedAt ? new Date(calculatedAt).toLocaleString() : '—';
+  const isMac = navigator.platform?.toUpperCase().indexOf('MAC') >= 0;
+  const shortcutKey = isMac ? '⌘⇧G' : 'Ctrl+Shift+G';
+
+  const rowsHTML = noGrades
+    ? `<tr><td colspan="5" class="igpa-empty">No grades found yet — check your Grades tab.</td></tr>`
+    : courses.map(c => buildCourseRowHTML(c)).join('');
 
   return `
 <div id="${OVERLAY_ID}" class="igpa-overlay" role="dialog" aria-modal="true" aria-label="Studently GPA Calculator">
   <div id="${MODAL_ID}" class="igpa-modal" tabindex="-1">
-    <!-- Header -->
     <div class="igpa-modal-header">
       <div class="igpa-header-left">
-        <div class="igpa-logo">🧮</div>
+        <div class="igpa-logo" aria-hidden="true">🧮</div>
         <div>
           <div class="igpa-title">Studently</div>
           <div class="igpa-title-sub">Infinite Campus grade tracker</div>
@@ -218,7 +223,6 @@ function buildModalHTML(result) {
       </div>
     </div>
 
-    <!-- GPA Summary Cards -->
     <div class="igpa-summary">
       <div class="igpa-card igpa-card-uw">
         <div class="igpa-card-label">Unweighted GPA</div>
@@ -237,7 +241,6 @@ function buildModalHTML(result) {
       </div>
     </div>
 
-    <!-- Toolbar -->
     <div class="igpa-toolbar">
       <span class="igpa-ts">🕐 Last updated: ${ts}</span>
       <div class="igpa-toolbar-actions">
@@ -246,7 +249,6 @@ function buildModalHTML(result) {
       </div>
     </div>
 
-    <!-- Course Table -->
     <div class="igpa-table-wrap">
       <table class="igpa-table" id="igpa-course-table">
         <thead>
@@ -267,7 +269,7 @@ function buildModalHTML(result) {
     <div class="igpa-footer">
       <span>Studently</span>
       <span>·</span>
-      <span>Press <kbd>Ctrl+Shift+G</kbd> to toggle</span>
+      <span>Press <kbd>${shortcutKey}</kbd> to toggle</span>
     </div>
   </div>
 </div>`;
@@ -330,21 +332,7 @@ function attachTableSorting(courses) {
       });
       const tbody = document.getElementById('igpa-tbody');
       if (!tbody) return;
-      tbody.innerHTML = sorted.map(c => `
-        <tr>
-          <td class="igpa-course-name">${escapeHTML(c.courseName)}</td>
-          <td class="igpa-pct-cell">
-            <div class="igpa-pct-bar-wrap">
-              <span class="igpa-pct-label">${c.pct.toFixed(2)}%</span>
-              <div class="igpa-pct-bar-bg">
-                <div class="igpa-pct-bar grade-${c.letter}" style="width:${Math.min(c.pct, 100).toFixed(1)}%"></div>
-              </div>
-            </div>
-          </td>
-          <td><span class="igpa-letter igpa-letter-${c.letter}">${c.letter}</span></td>
-          <td>${c.unweightedPoints.toFixed(1)}</td>
-          <td>${c.weightedPoints.toFixed(1)}${c.weightBoost > 0 ? `<sup class="igpa-boost">+${c.weightBoost}</sup>` : ''}</td>
-        </tr>`).join('');
+      tbody.innerHTML = sorted.map(c => buildCourseRowHTML(c)).join('');
     });
   });
 }
