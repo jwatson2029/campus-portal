@@ -1,5 +1,5 @@
-const LOG = (...args) => console.log('[GPA Calc]', ...args);
-const WARN = (...args) => console.warn('[GPA Calc]', ...args);
+const LOG = (...args) => console.log('[Studently]', ...args);
+const WARN = (...args) => console.warn('[Studently]', ...args);
 
 const BUTTON_ID   = 'infinite-gpa-btn';
 const MODAL_ID    = 'infinite-gpa-modal';
@@ -201,14 +201,14 @@ function buildModalHTML(result) {
         </tr>`).join('');
 
   return `
-<div id="${OVERLAY_ID}" class="igpa-overlay" role="dialog" aria-modal="true" aria-label="GPA Calculator">
+<div id="${OVERLAY_ID}" class="igpa-overlay" role="dialog" aria-modal="true" aria-label="Studently GPA Calculator">
   <div id="${MODAL_ID}" class="igpa-modal" tabindex="-1">
     <!-- Header -->
     <div class="igpa-modal-header">
       <div class="igpa-header-left">
         <div class="igpa-logo">🧮</div>
         <div>
-          <div class="igpa-title">Infinite GPA Calculator</div>
+          <div class="igpa-title">Studently</div>
           <div class="igpa-title-sub">Infinite Campus grade tracker</div>
         </div>
       </div>
@@ -265,7 +265,7 @@ function buildModalHTML(result) {
     </div>
 
     <div class="igpa-footer">
-      <span>Infinite GPA Calculator</span>
+      <span>Studently</span>
       <span>·</span>
       <span>Press <kbd>Ctrl+Shift+G</kbd> to toggle</span>
     </div>
@@ -367,12 +367,6 @@ function openModal() {
   const wrapper = document.createElement('div');
   wrapper.innerHTML = buildModalHTML(_lastResult);
   document.body.appendChild(wrapper.firstElementChild);
-
-  // Save snapshot to history
-  chrome.runtime.sendMessage({
-    action: 'SAVE_HISTORY',
-    entry: { ..._lastResult, url: location.href }
-  });
 
   bindModalEvents(_lastResult);
 }
