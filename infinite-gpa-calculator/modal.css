@@ -529,6 +529,22 @@ body.dark-mode, .dark-mode {
   letter-spacing: -0.2px;
 }
 
+.igpa-course-select {
+  background: transparent;
+  border: none;
+  color: inherit;
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 0;
+  text-align: left;
+}
+
+.igpa-course-select:hover {
+  color: var(--igpa-accent);
+  text-decoration: underline;
+}
+
 /* ── Grade progress bar ──────────────────────────────────── */
 .igpa-pct-cell {
   min-width: 140px;
@@ -716,6 +732,19 @@ body.dark-mode, .dark-mode {
   display: flex;
   justify-content: flex-end;
 }
+
+.igpa-whatif-results {
+  margin-top: 12px;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.igpa-delta-positive { color: #16a34a; }
+.igpa-delta-negative { color: #dc2626; }
+.igpa-delta-neutral { color: var(--igpa-text); }
 
 /* ── Footer ──────────────────────────────────────────────── */
 .igpa-footer {

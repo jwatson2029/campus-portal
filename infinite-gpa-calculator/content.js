@@ -179,7 +179,9 @@ function calculateGPA(grades) {
 function buildCourseRowHTML(c) {
   return `
         <tr>
-          <td class="igpa-course-name">${escapeHTML(c.courseName)}</td>
+          <td class="igpa-course-name">
+            <button class="igpa-course-select" data-course="${escapeAttr(c.courseName)}" data-pct="${c.pct.toFixed(2)}">${escapeHTML(c.courseName)}</button>
+          </td>
           <td class="igpa-pct-cell">
             <div class="igpa-pct-bar-wrap">
               <span class="igpa-pct-label">${c.pct.toFixed(2)}%</span>
@@ -265,6 +267,7 @@ function buildModalHTML(result) {
         </tbody>
       </table>
     </div>
+    ${buildWhatIfPanelHTML()}
 
     <div class="igpa-footer">
       <span>Studently</span>
@@ -273,6 +276,37 @@ function buildModalHTML(result) {
     </div>
   </div>
 </div>`;
+}
+
+function buildWhatIfPanelHTML() {
+  if (!_whatIfState.selectedCourseName) {
+    return `
+      <div id="igpa-whatif-panel" class="igpa-settings-panel">
+        <div class="igpa-settings-title">What-If Calculator</div>
+        <div class="igpa-empty">Click a class row above to simulate a score.</div>
+      </div>
+    `;
+  }
+
+  return `
+    <div id="igpa-whatif-panel" class="igpa-settings-panel">
+      <div class="igpa-settings-title">What-If Calculator: ${escapeHTML(_whatIfState.selectedCourseName)}</div>
+      <div class="igpa-weight-row">
+        <select id="igpa-whatif-category" class="igpa-input igpa-input-sm">
+          <option value="formative">Formative</option>
+          <option value="summative">Summative</option>
+        </select>
+        <input id="igpa-whatif-score" class="igpa-input igpa-input-sm" type="number" min="0" step="0.01" value="90" />
+        <input id="igpa-whatif-max" class="igpa-input igpa-input-sm" type="number" min="1" step="0.01" value="100" />
+        <button id="igpa-whatif-reset" class="igpa-btn igpa-btn-secondary igpa-btn-sm">Reset</button>
+      </div>
+      <div id="igpa-whatif-results" class="igpa-whatif-results">
+        <div>Current: ${_whatIfState.selectedCourseBasePct.toFixed(2)}%</div>
+        <div>New: ${_whatIfState.selectedCourseBasePct.toFixed(2)}%</div>
+        <div class="igpa-delta-neutral">+0.00%</div>
+      </div>
+    </div>
+  `;
 }
 
 function escapeHTML(str) {
@@ -312,6 +346,68 @@ function downloadBlob(content, filename, mime) {
 ═══════════════════════════════════════════════════════════════ */
 
 let _sortState = { col: null, dir: 1 };
+let _whatIfState = {
+  selectedCourseName: null,
+  selectedCourseBasePct: null
+};
+
+function escapeAttr(str) {
+  return escapeHTML(str).replace(/'/g, '&#39;');
+}
+
+function deriveClassDetailData(courseName, basePct) {
+  const assignments = [];
+  const escapedCourse = courseName.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+  const notifs = document.querySelectorAll('.notification__text, [class*="notification"] a, [class*="notification"] span');
+  notifs.forEach((el) => {
+    const text = (el.textContent || '').trim();
+    if (!text || !new RegExp(`\\bin\\s+${escapedCourse}\\b`, 'i').test(text)) return;
+    const am = ASSIGNMENT_REGEX.exec(text);
+    if (!am) return;
+    assignments.push({
+      name: text,
+      score: parseFloat(am[1]),
+      max: parseFloat(am[2])
+    });
+  });
+
+  const categories = { formative: [], summative: [] };
+  assignments.forEach((a) => {
+    const isSummative = /test|exam|summative|benchmark|final|midterm|unit/i.test(a.name);
+    categories[isSummative ? 'summative' : 'formative'].push(a);
+  });
+  if (!categories.formative.length && assignments.length) categories.formative = [...assignments];
+
+  return {
+    className: courseName,
+    currentGrade: basePct,
+    categories,
+    weights: { formative: 0.4, summative: 0.6 }
+  };
+}
+
+function calculateCategoryAverage(category) {
+  if (!category || !category.length) return 0;
+  const earned = category.reduce((s, a) => s + a.score, 0);
+  const total = category.reduce((s, a) => s + a.max, 0);
+  return total > 0 ? earned / total : 0;
+}
+
+function calculateWeightedClassGrade(data) {
+  const formativeAvg = calculateCategoryAverage(data.categories.formative);
+  const summativeAvg = calculateCategoryAverage(data.categories.summative);
+  const weighted = (formativeAvg * data.weights.formative) + (summativeAvg * data.weights.summative);
+  return Math.round(weighted * 10000) / 100;
+}
+
+function simulateGrade(originalData, category, score, maxScore) {
+  const cloned = JSON.parse(JSON.stringify(originalData));
+  cloned.categories[category].push({ name: 'Simulated', score, max: maxScore });
+  const newCategoryAverage = Math.round(calculateCategoryAverage(cloned.categories[category]) * 10000) / 100;
+  const newOverallGrade = calculateWeightedClassGrade(cloned);
+  const difference = Math.round((newOverallGrade - originalData.currentGrade) * 100) / 100;
+  return { newCategoryAverage, newOverallGrade, difference };
+}
 
 function attachTableSorting(courses) {
   const ths = document.querySelectorAll('#igpa-course-table thead th[data-col]');
@@ -393,9 +489,57 @@ function bindModalEvents(result) {
 
   // Table sorting
   if (result.courses?.length) attachTableSorting(result.courses);
+  bindWhatIfEvents();
 
   // Keyboard close
   document.addEventListener('keydown', handleKeyDown);
+}
+
+function updateWhatIfResults() {
+  if (!_whatIfState.selectedCourseName) return;
+  const category = document.getElementById('igpa-whatif-category')?.value || 'formative';
+  const score = parseFloat(document.getElementById('igpa-whatif-score')?.value || '0');
+  const max = parseFloat(document.getElementById('igpa-whatif-max')?.value || '0');
+  if (!(score >= 0) || !(max > 0)) return;
+
+  const classData = deriveClassDetailData(_whatIfState.selectedCourseName, _whatIfState.selectedCourseBasePct);
+  const sim = simulateGrade(classData, category, score, max);
+  const sign = sim.difference > 0 ? '+' : '';
+  const deltaClass = sim.difference > 0 ? 'igpa-delta-positive' : sim.difference < 0 ? 'igpa-delta-negative' : 'igpa-delta-neutral';
+  const results = document.getElementById('igpa-whatif-results');
+  if (!results) return;
+  results.innerHTML = `
+    <div>Current: ${classData.currentGrade.toFixed(2)}%</div>
+    <div>New: ${sim.newOverallGrade.toFixed(2)}%</div>
+    <div class="${deltaClass}">${sign}${sim.difference.toFixed(2)}%</div>
+  `;
+}
+
+function bindWhatIfEvents() {
+  document.querySelectorAll('.igpa-course-select').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      _whatIfState.selectedCourseName = btn.dataset.course || null;
+      _whatIfState.selectedCourseBasePct = parseFloat(btn.dataset.pct || '0');
+      const panel = document.getElementById('igpa-whatif-panel');
+      if (panel) panel.outerHTML = buildWhatIfPanelHTML();
+      bindWhatIfEvents();
+      updateWhatIfResults();
+    });
+  });
+
+  ['igpa-whatif-category', 'igpa-whatif-score', 'igpa-whatif-max'].forEach((id) => {
+    document.getElementById(id)?.addEventListener('input', updateWhatIfResults);
+  });
+
+  document.getElementById('igpa-whatif-reset')?.addEventListener('click', () => {
+    const category = document.getElementById('igpa-whatif-category');
+    const score = document.getElementById('igpa-whatif-score');
+    const max = document.getElementById('igpa-whatif-max');
+    if (category) category.value = 'formative';
+    if (score) score.value = '90';
+    if (max) max.value = '100';
+    updateWhatIfResults();
+  });
 }
 
 function handleKeyDown(e) {
