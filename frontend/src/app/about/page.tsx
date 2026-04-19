@@ -2,7 +2,7 @@ import CTAButton from "@/components/CTAButton";
 import type { Metadata } from "next";
 
 const CHROME_STORE_URL =
-  "https://chromewebstore.google.com/detail/Studently/mbojfndockcpgcdlbpmcheiimdhndbho";
+  "https://chromewebstore.google.com/detail/Studently/cmjhihkdjmadgndaidfmbpbaaghljbpd";
 
 export const metadata: Metadata = {
   title: "About Studently – Our Educational Mission",
