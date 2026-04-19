@@ -200,7 +200,6 @@ function buildModalHTML(result) {
   const { unweighted, weighted, courses, totalCredits, calculatedAt } = result;
 
   const noGrades = !courses || courses.length === 0;
-  const ts = calculatedAt ? new Date(calculatedAt).toLocaleString() : '—';
   const isMac = navigator.platform?.toUpperCase().indexOf('MAC') >= 0;
   const shortcutKey = isMac ? '⌘⇧G' : 'Ctrl+Shift+G';
 
@@ -240,14 +239,6 @@ function buildModalHTML(result) {
         <div class="igpa-card-label">Courses</div>
         <div class="igpa-card-value">${courses ? courses.length : 0}</div>
         <div class="igpa-card-sub">${totalCredits || 0} total credit(s)</div>
-      </div>
-    </div>
-
-    <div class="igpa-toolbar">
-      <span class="igpa-ts">🕐 Last updated: ${ts}</span>
-      <div class="igpa-toolbar-actions">
-        <button id="igpa-export-csv"  class="igpa-btn igpa-btn-secondary igpa-btn-sm">⬇ CSV</button>
-        <button id="igpa-export-json" class="igpa-btn igpa-btn-secondary igpa-btn-sm">⬇ JSON</button>
       </div>
     </div>
 
@@ -477,14 +468,6 @@ function bindModalEvents(result) {
   document.getElementById('igpa-refresh-btn')?.addEventListener('click', () => {
     LOG('Manual refresh triggered.');
     refreshModal();
-  });
-
-  // Export
-  document.getElementById('igpa-export-csv')?.addEventListener('click', () => {
-    if (result.courses?.length) exportCSV(result.courses);
-  });
-  document.getElementById('igpa-export-json')?.addEventListener('click', () => {
-    exportJSON(result);
   });
 
   // Table sorting

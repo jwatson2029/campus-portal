@@ -1,9 +1,9 @@
 :root {
   /* Brand palette */
-  --igpa-accent:        #4f6ef7;
-  --igpa-accent-h:      #3a55d4;
-  --igpa-accent-soft:   rgba(79, 110, 247, 0.12);
-  --igpa-accent-glow:   rgba(79, 110, 247, 0.35);
+  --igpa-accent:        #4b5d8a;
+  --igpa-accent-h:      #3e4e76;
+  --igpa-accent-soft:   rgba(75, 93, 138, 0.12);
+  --igpa-accent-glow:   rgba(75, 93, 138, 0.2);
 
   /* Surfaces */
   --igpa-bg:            #ffffff;
@@ -96,8 +96,8 @@ body.dark-mode, .dark-mode {
   color: var(--igpa-text);
   border-radius: var(--igpa-radius);
   box-shadow: var(--igpa-shadow);
-  width: min(760px, 88vw);
-  max-height: 82vh;
+  width: min(980px, 94vw);
+  max-height: 90vh;
   overflow-y: auto;
   overflow-x: hidden;
   display: flex;
@@ -155,7 +155,7 @@ body.dark-mode, .dark-mode {
   width: 34px;
   height: 34px;
   border-radius: var(--igpa-radius-sm);
-  background: linear-gradient(135deg, var(--igpa-accent) 0%, #7c3aed 100%);
+  background: linear-gradient(135deg, var(--igpa-accent) 0%, #5d6b91 100%);
   font-size: 17px;
   line-height: 1;
   box-shadow: 0 4px 16px var(--igpa-accent-glow), inset 0 1px 0 rgba(255,255,255,0.2);
@@ -341,14 +341,14 @@ body.dark-mode, .dark-mode {
 }
 
 .igpa-card-uw .igpa-card-value {
-  background: linear-gradient(135deg, var(--igpa-accent), #7c3aed);
+  background: linear-gradient(135deg, #4e5f89, #64759d);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
 }
 
 .igpa-card-w .igpa-card-value {
-  background: linear-gradient(135deg, var(--igpa-a), #4ade80);
+  background: linear-gradient(135deg, #50745a, #699275);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
   background-clip: text;
@@ -357,33 +357,6 @@ body.dark-mode, .dark-mode {
 .igpa-card-info .igpa-card-value { color: var(--igpa-text); }
 
 /* ── Toolbar ─────────────────────────────────────────────── */
-.igpa-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 20px 12px;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-
-.igpa-ts {
-  font-size: 12px;
-  color: var(--igpa-text-muted);
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 6px 12px;
-  background: var(--igpa-bg-2);
-  border-radius: var(--igpa-radius-xs);
-  border: 1px solid var(--igpa-border);
-}
-
-.igpa-toolbar-actions {
-  display: flex;
-  gap: 8px;
-  flex-wrap: wrap;
-}
-
 /* ── Buttons ─────────────────────────────────────────────── */
 .igpa-btn {
   display: inline-flex;
@@ -461,6 +434,8 @@ body.dark-mode, .dark-mode {
 .igpa-table-wrap {
   overflow-x: auto;
   padding: 0 20px 14px;
+  max-height: 46vh;
+  overflow-y: auto;
 }
 
 .igpa-table {
@@ -542,7 +517,6 @@ body.dark-mode, .dark-mode {
 
 .igpa-course-select:hover {
   color: var(--igpa-accent);
-  text-decoration: underline;
 }
 
 /* ── Grade progress bar ──────────────────────────────────── */
@@ -858,10 +832,9 @@ body.dark-mode, .dark-mode {
 
 /* ── Responsive refinements ──────────────────────────────── */
 @media (max-width: 640px) {
-  #infinite-gpa-modal { width: 94vw; max-height: 86vh; }
+  #infinite-gpa-modal { width: 96vw; max-height: 90vh; }
   .igpa-modal-header { padding: 14px 14px 12px; }
   .igpa-summary { padding: 12px 14px 10px; }
-  .igpa-toolbar { padding: 0 20px 14px; }
   .igpa-table-wrap { padding: 0 14px 12px; }
   .igpa-footer { padding: 10px 14px; }
   .igpa-settings-panel { margin: 0 14px 12px; }
