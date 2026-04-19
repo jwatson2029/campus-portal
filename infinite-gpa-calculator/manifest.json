@@ -48,7 +48,7 @@
         "default": "Ctrl+Shift+G",
         "mac": "Command+Shift+G"
       },
-      "description": "Open the GPA Calculator"
+      "description": "Toggle Studently (GPA & what-if)"
     }
   },
 

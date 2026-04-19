@@ -162,7 +162,46 @@ body.dark-mode, .dark-mode {
   transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s;
 }
 
-.igpa-logo:hover {
+.igpa-logo--brand {
+  width: 40px;
+  height: 40px;
+  background: transparent;
+  box-shadow: none;
+  padding: 0;
+}
+
+.igpa-logo-img {
+  display: block;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  object-fit: cover;
+}
+
+.igpa-logo--brand:hover {
+  transform: scale(1.05);
+  box-shadow: none;
+}
+
+.igpa-title-link,
+.igpa-footer-brand {
+  color: inherit;
+  text-decoration: none;
+}
+
+.igpa-title-link:hover,
+.igpa-footer-brand:hover {
+  color: var(--igpa-accent);
+  text-decoration: underline;
+}
+
+#infinite-gpa-btn .igpa-btn-icon-img {
+  display: block;
+  border-radius: 4px;
+  object-fit: cover;
+}
+
+.igpa-logo:not(.igpa-logo--brand):hover {
   transform: scale(1.08) rotate(-3deg);
   box-shadow: 0 6px 20px var(--igpa-accent-glow), inset 0 1px 0 rgba(255,255,255,0.2);
 }
@@ -840,5 +879,7 @@ body.dark-mode, .dark-mode {
   .igpa-settings-panel { margin: 0 14px 12px; }
   .igpa-card-value { font-size: 30px; letter-spacing: -1.5px; }
   .igpa-title { font-size: 15px; }
-  .igpa-logo { width: 30px; height: 30px; font-size: 15px; }
+  .igpa-logo:not(.igpa-logo--brand) { width: 30px; height: 30px; font-size: 15px; }
+  .igpa-logo--brand { width: 32px; height: 32px; }
+  .igpa-logo--brand .igpa-logo-img { width: 32px; height: 32px; }
 }

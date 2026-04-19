@@ -3,13 +3,19 @@ import Link from "next/link";
 const CHROME_STORE_URL =
   "https://chromewebstore.google.com/detail/Studently/mbojfndockcpgcdlbpmcheiimdhndbho";
 
+const SITE_URL = "https://studently.website";
+
 export default function Footer() {
   return (
     <footer className="border-t border-border bg-background">
       <div className="mx-auto max-w-6xl px-6 py-12">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <h3 className="text-lg font-bold text-foreground">Studently</h3>
+            <h3 className="text-lg font-bold text-foreground">
+              <a href={SITE_URL} className="hover:underline">
+                Studently
+              </a>
+            </h3>
             <p className="mt-2 text-sm text-muted leading-relaxed">
               A better way to use Infinite Campus. Track grades, assignments, and progress with a modern dashboard.
             </p>

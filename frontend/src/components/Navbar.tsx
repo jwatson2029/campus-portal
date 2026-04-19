@@ -6,15 +6,22 @@ import { useState } from "react";
 const CHROME_STORE_URL =
   "https://chromewebstore.google.com/detail/Studently/mbojfndockcpgcdlbpmcheiimdhndbho";
 
+const SITE_URL = "https://studently.website";
+
 export default function Navbar() {
   const [mobileOpen, setMobileOpen] = useState(false);
 
   return (
     <nav className="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-lg">
       <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
-        <Link href="/" className="text-xl font-bold tracking-tight text-foreground">
+        <a
+          href={SITE_URL}
+          className="flex items-center gap-2 text-xl font-bold tracking-tight text-foreground hover:opacity-90"
+        >
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src="/favicon.png" alt="" width={28} height={28} className="rounded-md" />
           Studently
-        </Link>
+        </a>
 
         <div className="hidden items-center gap-8 md:flex">
           <Link href="/about" className="text-sm text-muted hover:text-foreground transition-colors">

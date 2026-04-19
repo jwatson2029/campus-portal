@@ -1,9 +1,56 @@
 const LOG = (...args) => console.log('[Studently]', ...args);
 const WARN = (...args) => console.warn('[Studently]', ...args);
 
+const STUDENTLY_SITE = 'https://studently.website';
+
 const BUTTON_ID   = 'infinite-gpa-btn';
 const MODAL_ID    = 'infinite-gpa-modal';
 const OVERLAY_ID  = 'infinite-gpa-overlay';
+
+function extensionIconUrl(size) {
+  try {
+    return chrome.runtime.getURL(`icons/icon-${size}.png`);
+  } catch (_) {
+    return '';
+  }
+}
+
+function toggleGpaModal() {
+  const overlay = document.getElementById(OVERLAY_ID);
+  if (overlay) {
+    overlay.style.display = overlay.style.display === 'none' ? 'flex' : 'none';
+  } else {
+    openModal();
+  }
+}
+
+function onGlobalKeydown(e) {
+  if (e.key === 'Escape') {
+    const overlay = document.getElementById(OVERLAY_ID);
+    if (overlay && overlay.style.display !== 'none') {
+      e.preventDefault();
+      closeModal();
+    }
+    return;
+  }
+  const isToggleShortcut =
+    (e.key === 'g' || e.key === 'G') && e.shiftKey && (e.metaKey || e.ctrlKey);
+  if (!isToggleShortcut) return;
+
+  const t = e.target;
+  const inOurOverlay = t && t.closest && t.closest(`#${OVERLAY_ID}`);
+  if (
+    !inOurOverlay &&
+    t &&
+    (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.tagName === 'SELECT' || t.isContentEditable)
+  ) {
+    return;
+  }
+
+  e.preventDefault();
+  e.stopPropagation();
+  toggleGpaModal();
+}
 
 const GRADE_REGEX = /updated grade of (\d+(?:\.\d+)?)\s*\((\d+(?:\.\d+)?)%\)\s*in\s+(.+?)(?:\s*:\s*(Course Average|Semester\s+\d+\s+Average|9\s*WEEKS?|Semester Average))?$/i;
 
@@ -207,14 +254,15 @@ function buildModalHTML(result) {
     ? `<tr><td colspan="5" class="igpa-empty">No grades found yet — check your Grades tab.</td></tr>`
     : courses.map(c => buildCourseRowHTML(c)).join('');
 
+  const logoSrc = extensionIconUrl(128);
   return `
 <div id="${OVERLAY_ID}" class="igpa-overlay" role="dialog" aria-modal="true" aria-label="Studently GPA Calculator">
   <div id="${MODAL_ID}" class="igpa-modal" tabindex="-1">
     <div class="igpa-modal-header">
       <div class="igpa-header-left">
-        <div class="igpa-logo" aria-hidden="true">🧮</div>
+        <div class="igpa-logo igpa-logo--brand" aria-hidden="true"><img class="igpa-logo-img" src="${logoSrc}" alt="" width="40" height="40" /></div>
         <div>
-          <div class="igpa-title">Studently</div>
+          <div class="igpa-title"><a class="igpa-title-link" href="${STUDENTLY_SITE}" target="_blank" rel="noopener noreferrer">Studently</a></div>
           <div class="igpa-title-sub">Infinite Campus grade tracker</div>
         </div>
       </div>
@@ -261,7 +309,7 @@ function buildModalHTML(result) {
     ${buildWhatIfPanelHTML()}
 
     <div class="igpa-footer">
-      <span>Studently</span>
+      <a class="igpa-footer-brand" href="${STUDENTLY_SITE}" target="_blank" rel="noopener noreferrer">Studently</a>
       <span>·</span>
       <span>Press <kbd>${shortcutKey}</kbd> to toggle</span>
     </div>
@@ -473,9 +521,6 @@ function bindModalEvents(result) {
   // Table sorting
   if (result.courses?.length) attachTableSorting(result.courses);
   bindWhatIfEvents();
-
-  // Keyboard close
-  document.addEventListener('keydown', handleKeyDown);
 }
 
 function updateWhatIfResults() {
@@ -525,16 +570,12 @@ function bindWhatIfEvents() {
   });
 }
 
-function handleKeyDown(e) {
-  if (e.key === 'Escape') closeModal();
-}
-
 /* ═══════════════════════════════════════════════════════════════
    FLOATING BUTTON (fixed top-centre of page)
 ═══════════════════════════════════════════════════════════════ */
 
 /**
- * Inject the "🧮 GPA" floating button at the top of the page.
+ * Inject the floating GPA button at the top of the page.
  * Delegates to the __igpaInjectButton helper exposed by inject-button.js,
  * which is loaded before this script.
  */
@@ -609,18 +650,13 @@ function init() {
   }, { once: true });
 
   startObserver();
+
+  document.addEventListener('keydown', onGlobalKeydown, true);
 }
 
-// Listen for keyboard shortcut from background.js
+// Listen for keyboard shortcut from background.js (chrome://extensions → shortcut)
 chrome.runtime.onMessage.addListener((msg) => {
-  if (msg.action === 'TOGGLE_GPA_MODAL') {
-    const overlay = document.getElementById(OVERLAY_ID);
-    if (overlay) {
-      overlay.style.display = overlay.style.display === 'none' ? 'flex' : 'none';
-    } else {
-      openModal();
-    }
-  }
+  if (msg.action === 'TOGGLE_GPA_MODAL') toggleGpaModal();
 });
 
 // Kick off

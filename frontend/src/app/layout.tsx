@@ -25,6 +25,10 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  icons: {
+    icon: "/favicon.png",
+    apple: "/favicon.png",
+  },
   title: {
     default: "Studently – Better Infinite Campus Dashboard | Educational Tool",
     template: "%s | Studently",
@@ -56,7 +60,7 @@ export const metadata: Metadata = {
     "classroom grades",
     "report card viewer",
   ],
-  authors: [{ name: "Studently", url: "https://studently.app" }],
+  authors: [{ name: "Studently", url: "https://studently.website" }],
   creator: "Studently",
   publisher: "Studently",
   category: "education",
@@ -82,7 +86,7 @@ export const metadata: Metadata = {
   openGraph: {
     type: "website",
     locale: "en_US",
-    url: "https://studently.app",
+    url: "https://studently.website",
     siteName: "Studently",
     title: "Studently – Better Infinite Campus Dashboard | Free Educational Tool",
     description:
@@ -105,7 +109,7 @@ export const metadata: Metadata = {
     creator: "@studently",
   },
   alternates: {
-    canonical: "https://studently.app",
+    canonical: "https://studently.website",
   },
   other: {
     "apple-mobile-web-app-capable": "yes",
@@ -132,7 +136,7 @@ export const metadata: Metadata = {
       "This website and Chrome extension are designed for educational purposes only. Studently helps students track their academic progress by providing a modern interface for Infinite Campus.",
     "intended-audience": "K-12 Students, High School Students, College Students",
   },
-  metadataBase: new URL("https://studently.app"),
+  metadataBase: new URL("https://studently.website"),
 };
 
 const jsonLd = {
@@ -142,7 +146,7 @@ const jsonLd = {
   applicationCategory: "EducationalApplication",
   operatingSystem: "Chrome",
   browserRequirements: "Google Chrome",
-  url: "https://studently.app",
+  url: "https://studently.website",
   description:
     "A free educational Chrome extension that enhances Infinite Campus with a modern student dashboard for tracking grades, assignments, and GPA.",
   offers: {
@@ -154,7 +158,7 @@ const jsonLd = {
   author: {
     "@type": "Organization",
     name: "Studently",
-    url: "https://studently.app",
+    url: "https://studently.website",
   },
   audience: {
     "@type": "EducationalAudience",
@@ -170,7 +174,7 @@ const organizationJsonLd = {
   "@context": "https://schema.org",
   "@type": "Organization",
   name: "Studently",
-  url: "https://studently.app",
+  url: "https://studently.website",
   description:
     "Studently builds free educational tools for students to better track academic progress.",
   contactPoint: {
@@ -184,7 +188,7 @@ const websiteJsonLd = {
   "@context": "https://schema.org",
   "@type": "WebSite",
   name: "Studently",
-  url: "https://studently.app",
+  url: "https://studently.website",
   description:
     "Free educational Chrome extension for a better Infinite Campus student dashboard.",
   publisher: {
