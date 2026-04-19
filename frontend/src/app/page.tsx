@@ -4,7 +4,7 @@ import FeatureCard from "@/components/FeatureCard";
 import type { Metadata } from "next";
 
 const CHROME_STORE_URL =
-  "https://chromewebstore.google.com/detail/Studently/mbojfndockcpgcdlbpmcheiimdhndbho";
+  "https://chromewebstore.google.com/detail/Studently/cmjhihkdjmadgndaidfmbpbaaghljbpd";
 
 export const metadata: Metadata = {
   title: "Studently – Better Infinite Campus Dashboard | Free Educational Tool",
