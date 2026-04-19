@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
+import { ClerkProvider } from "@clerk/nextjs";
 import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import "./globals.css";
@@ -223,12 +224,14 @@ export default function RootLayout({
         />
       </head>
       <body className="min-h-full flex flex-col">
-        <div className="bg-accent/10 border-b border-accent/20 px-4 py-2 text-center text-xs text-accent font-medium">
-          This tool is designed for educational purposes — helping students track grades and academic progress.
-        </div>
-        <Navbar />
-        <main className="flex-1">{children}</main>
-        <Footer />
+        <ClerkProvider>
+          <div className="bg-accent/10 border-b border-accent/20 px-4 py-2 text-center text-xs text-accent font-medium">
+            This tool is designed for educational purposes — helping students track grades and academic progress.
+          </div>
+          <Navbar />
+          <main className="flex-1">{children}</main>
+          <Footer />
+        </ClerkProvider>
       </body>
     </html>
   );
