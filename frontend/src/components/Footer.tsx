@@ -1,7 +1,7 @@
 import Link from "next/link";
 
 const CHROME_STORE_URL =
-  "https://chromewebstore.google.com/detail/Studently/mbojfndockcpgcdlbpmcheiimdhndbho";
+  "https://chromewebstore.google.com/detail/Studently/cmjhihkdjmadgndaidfmbpbaaghljbpd";
 
 const SITE_URL = "https://studently.website";
 
