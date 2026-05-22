@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
-  "name": "Studently",
-  "version": "1.0.0",
+  "name": "Studently - Infinite Campus+",
+  "version": "2.0",
   "description": "Instantly calculate Unweighted & Weighted GPA from Infinite Campus grades — with per-course breakdown, export, and custom weighting.",
 
   "icons": {
