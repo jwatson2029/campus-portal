@@ -544,30 +544,48 @@ function updateWhatIfResults() {
 }
 
 function bindWhatIfEvents() {
-  document.querySelectorAll('.igpa-course-select').forEach((btn) => {
-    btn.addEventListener('click', () => {
+  // Use event delegation for course selection to avoid duplicate listeners
+  const table = document.getElementById('igpa-course-table');
+  if (table && !table.dataset.bound) {
+    table.addEventListener('click', (e) => {
+      const btn = e.target.closest('.igpa-course-select');
+      if (!btn) return;
+      
       _whatIfState.selectedCourseName = btn.dataset.course || null;
       _whatIfState.selectedCourseBasePct = parseFloat(btn.dataset.pct || '0');
       const panel = document.getElementById('igpa-whatif-panel');
       if (panel) panel.outerHTML = buildWhatIfPanelHTML();
-      bindWhatIfEvents();
+      bindWhatIfEventListeners();
       updateWhatIfResults();
     });
-  });
+    table.dataset.bound = 'true';
+  }
+  
+  bindWhatIfEventListeners();
+}
 
+function bindWhatIfEventListeners() {
   ['igpa-whatif-category', 'igpa-whatif-score', 'igpa-whatif-max'].forEach((id) => {
-    document.getElementById(id)?.addEventListener('input', updateWhatIfResults);
+    const el = document.getElementById(id);
+    if (el && !el.dataset.bound) {
+      el.addEventListener('input', updateWhatIfResults);
+      el.dataset.bound = 'true';
+    }
   });
 
-  document.getElementById('igpa-whatif-reset')?.addEventListener('click', () => {
-    const category = document.getElementById('igpa-whatif-category');
-    const score = document.getElementById('igpa-whatif-score');
-    const max = document.getElementById('igpa-whatif-max');
-    if (category) category.value = 'formative';
-    if (score) score.value = '90';
-    if (max) max.value = '100';
-    updateWhatIfResults();
-  });
+  const resetBtn = document.getElementById('igpa-whatif-reset');
+  if (resetBtn && !resetBtn.dataset.bound) {
+    resetBtn.addEventListener('click', () => {
+      const category = document.getElementById('igpa-whatif-category');
+      const score = document.getElementById('igpa-whatif-score');
+      const max = document.getElementById('igpa-whatif-max');
+      if (category) category.value = 'formative';
+      if (score) score.value = '90';
+      if (max) max.value = '100';
+      updateWhatIfResults();
+    });
+    resetBtn.dataset.bound = 'true';
+  }
 }
 
 /* ═══════════════════════════════════════════════════════════════
